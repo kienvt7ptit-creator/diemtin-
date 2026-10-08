@@ -1,0 +1,835 @@
+<!doctype html><html lang="vi"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Điểm Tin Sáng</title>
+<meta name="description" content="Bản tin sáng: bất động sản, luật đất đai, chính sách, tài chính">
+<meta name="theme-color" content="#1c140f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Điểm Tin Sáng">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+</head><body>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..720;1,9..144,340..720&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* layout concept: a mainstream news-portal shell — dark masthead + live clock,
+   a category nav rail, a market ticker band, then a photo-less "cover" hero
+   (gradient + icon watermark standing in for a lead photo) above a
+   thumbnail-led story grid, so the page reads like a real front page even
+   though it has no photography to work with */
+:root{
+  --bg:#f7f1e3;
+  --bg-dot:#e9dcbd;
+  --paper-raised:#fffdf8;
+  --ink:#241a13;
+  --muted:#8a7a63;
+  --accent:#7a2416;
+  --accent-soft:#f1ded5;
+  --brand-dark:#1c140f;
+  --brand-dark-2:#45271a;
+  --border:#e7dcc0;
+  --line:#dac9a2;
+  --up:#2f7a4d;
+  --down:#9c2214;
+  --cat-re:#7a2416;
+  --cat-law:#5c6b2e;
+  --cat-policy:#3a5a73;
+  --cat-fin:#b9870f;
+  --cat-world:#8a7a63;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15100c;
+    --bg-dot:#241a12;
+    --paper-raised:#1f1712;
+    --ink:#f1e7d6;
+    --muted:#b2a088;
+    --accent:#e2795e;
+    --accent-soft:#3c2017;
+    --brand-dark:#000000;
+    --brand-dark-2:#2a1810;
+    --border:#372a1e;
+    --line:#443321;
+    --up:#5fc98a;
+    --down:#e2795e;
+    --cat-re:#e2795e;
+    --cat-law:#a7bd6f;
+    --cat-policy:#7fb3d6;
+    --cat-fin:#e3bb55;
+    --cat-world:#b2a088;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15100c;
+  --bg-dot:#241a12;
+  --paper-raised:#1f1712;
+  --ink:#f1e7d6;
+  --muted:#b2a088;
+  --accent:#e2795e;
+  --accent-soft:#3c2017;
+  --brand-dark:#000000;
+  --brand-dark-2:#2a1810;
+  --border:#372a1e;
+  --line:#443321;
+  --up:#5fc98a;
+  --down:#e2795e;
+  --cat-re:#e2795e;
+  --cat-law:#a7bd6f;
+  --cat-policy:#7fb3d6;
+  --cat-fin:#e3bb55;
+  --cat-world:#b2a088;
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background:
+    radial-gradient(circle at 1px 1px, var(--bg-dot) 1px, transparent 1.6px) 0 0/16px 16px,
+    var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+}
+
+a{color:inherit}
+
+/* ---- masthead bar (full-bleed) ---- */
+.masthead-bar{
+  background:linear-gradient(135deg,var(--brand-dark),var(--brand-dark-2));
+  padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  white-space:nowrap;
+}
+.brand-avatar{
+  width:30px;height:30px;
+  border-radius:50%;
+  flex:0 0 auto;
+  object-fit:cover;
+  box-shadow:0 0 0 2px rgba(255,255,255,.18), 0 0 0 1px var(--accent);
+}
+.brand-text{display:flex;flex-direction:column;gap:1px;min-width:0}
+.brand-name{
+  display:flex;align-items:center;gap:7px;
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:17.5px;
+  letter-spacing:-.01em;
+  color:#fdfcf8;
+  line-height:1.1;
+}
+.brand-sub{
+  font-family:var(--font-body);
+  font-size:10px;
+  letter-spacing:.03em;
+  color:#c9ad98;
+  line-height:1.1;
+}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--accent);
+  flex:0 0 auto;
+  box-shadow:0 0 0 0 rgba(122,36,22,.6);
+  animation:pulse 2s infinite;
+}
+@media (prefers-reduced-motion: reduce){.live-dot{animation:none}}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(122,36,22,.55)}
+  70%{box-shadow:0 0 0 6px rgba(122,36,22,0)}
+  100%{box-shadow:0 0 0 0 rgba(122,36,22,0)}
+}
+.masthead-time{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:#c9c4b6;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+/* ---- category nav rail ---- */
+.catnav{
+  display:flex;
+  gap:18px;
+  overflow-x:auto;
+  padding:9px 16px;
+  background:var(--paper-raised);
+  border-bottom:2px solid var(--accent);
+  scrollbar-width:none;
+}
+.catnav::-webkit-scrollbar{display:none}
+.catnav[hidden]{display:none}
+.catnav button{
+  flex:0 0 auto;
+  background:none;
+  border:none;
+  padding:2px 0;
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  color:var(--muted);
+  border-bottom:2px solid transparent;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.catnav button:hover{color:var(--ink)}
+.catnav button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ---- ticker band (full-bleed, market-style) ---- */
+.ticker-bar{
+  background:var(--brand-dark);
+  display:flex;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.ticker-bar::-webkit-scrollbar{display:none}
+.ticker-bar[hidden]{display:none}
+.ticker-item{
+  flex:0 0 auto;
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  padding:9px 14px;
+  border-right:1px solid rgba(255,255,255,.1);
+  white-space:nowrap;
+}
+.ticker-item .t-label{
+  font-family:var(--font-body);
+  font-size:10.5px;
+  font-weight:500;
+  color:#9f9a8c;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+}
+.ticker-item .t-value{
+  font-family:var(--font-mono);
+  font-size:13px;
+  font-weight:600;
+  color:#fdfcf8;
+  font-variant-numeric:tabular-nums;
+}
+.ticker-item .t-trend{font-size:11px;line-height:1}
+.ticker-item .t-trend.up{color:var(--up)}
+.ticker-item .t-trend.down{color:var(--down)}
+.ticker-item .t-trend.flat{color:#9f9a8c}
+.ticker-item .t-note{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  color:#9f9a8c;
+}
+
+/* ---- page shell ---- */
+.page{
+  max-width:760px;
+  margin:0 auto;
+  padding-inline:16px;
+  padding-block:16px 36px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.edition-row{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  color:var(--muted);
+}
+.edition-row .dot{opacity:.5}
+
+/* ---- archive rail ---- */
+.archive{display:flex;gap:8px;overflow-x:auto;padding-block:2px;scrollbar-width:thin}
+.archive::-webkit-scrollbar{height:6px}
+.archive::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.archive[hidden]{display:none}
+.issue-pill{
+  flex:0 0 auto;
+  font-family:var(--font-mono);
+  font-size:12px;
+  padding:6px 11px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--paper-raised);
+  color:var(--muted);
+  cursor:pointer;
+  white-space:nowrap;
+}
+.issue-pill:hover{border-color:var(--accent)}
+.issue-pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.issue-pill.is-active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ---- hero / "điểm nhấn" cover card ---- */
+.hero{
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  min-height:188px;
+  display:flex;
+  align-items:flex-end;
+  padding:18px;
+  isolation:isolate;
+  box-shadow:0 8px 20px -10px rgba(0,0,0,.35);
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.08) 0 2px, transparent 2px 14px),
+    linear-gradient(135deg, var(--hero-cat), color-mix(in srgb, var(--hero-cat) 45%, #000 55%));
+}
+.hero-icon{
+  position:absolute;right:-18px;bottom:-18px;z-index:1;
+  width:150px;height:150px;
+  color:rgba(255,255,255,.22);
+}
+.hero-icon svg{width:100%;height:100%}
+.hero-scrim{
+  position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.25) 55%, rgba(0,0,0,0) 100%);
+}
+.hero-content{position:relative;z-index:3;display:flex;flex-direction:column;gap:8px;min-width:0}
+.hero-badges{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.badge-pin{
+  background:var(--accent);
+  color:#fff;
+  font-family:var(--font-body);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:3px 8px;
+  border-radius:4px;
+}
+.badge-cat{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.82);
+}
+.hero h2{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:clamp(19px,5vw,25px);
+  line-height:1.2;
+  margin:0;
+  color:#fff;
+  text-wrap:balance;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
+}
+.hero p{
+  margin:0;
+  font-size:13px;
+  line-height:1.5;
+  color:rgba(255,255,255,.88);
+  max-width:60ch;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+.hero .source{font-family:var(--font-mono);font-size:11px;margin-top:2px}
+.hero .source a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.45)}
+.hero .source a:hover{border-bottom-color:#fff}
+
+/* ---- sections ---- */
+main{display:flex;flex-direction:column;gap:22px}
+.section{display:flex;flex-direction:column;gap:9px;min-width:0}
+.section-head{display:flex;align-items:center;gap:9px}
+.section-bar{width:4px;height:17px;border-radius:2px;flex:0 0 auto}
+.section-head h2{
+  font-family:var(--font-body);
+  font-weight:700;
+  font-size:13.5px;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+  margin:0;
+  white-space:nowrap;
+}
+.section-head .rule{flex:1;height:1px;background:var(--border)}
+.section-count{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+
+/* ---- story cards ---- */
+.card-grid{display:flex;flex-direction:column;gap:9px}
+.card{
+  display:flex;
+  gap:11px;
+  padding:11px;
+  background:var(--paper-raised);
+  border:1px solid var(--border);
+  border-radius:12px;
+  min-width:0;
+  text-decoration:none;
+  color:inherit;
+  box-shadow:0 1px 3px rgba(0,0,0,.05);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+a.card:hover{transform:translateY(-1px);box-shadow:0 5px 14px -6px rgba(0,0,0,.18)}
+.card-thumb{
+  width:58px;height:58px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;
+  color:#fff;
+}
+.card-thumb svg{width:26px;height:26px}
+.card-body{display:flex;flex-direction:column;gap:3px;min-width:0;justify-content:center}
+.card h3{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:14.5px;
+  line-height:1.28;
+  margin:0;
+  color:var(--ink);
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+.card .gist{
+  font-size:11.5px;
+  line-height:1.42;
+  color:var(--muted);
+  margin:0;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+.card .src{
+  font-family:var(--font-mono);
+  font-size:10px;
+  font-weight:600;
+  color:var(--cat-current,var(--accent));
+  text-transform:uppercase;
+  letter-spacing:.03em;
+}
+
+/* ---- side rails: desktop-only "most read" column ---- */
+.side-rail{
+  position:fixed;top:24px;width:176px;max-height:calc(100vh - 48px);
+  overflow:hidden;display:none;flex-direction:column;gap:10px;
+}
+.side-rail.left{left:calc(50% - 380px - 24px - 176px)}
+.side-rail.right{right:calc(50% - 380px - 24px - 176px)}
+@media (min-width:1140px){ .side-rail{display:flex} }
+.rail-head{
+  font-family:var(--font-body);font-weight:700;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink);padding-bottom:6px;border-bottom:2px solid var(--accent);
+}
+.poster{
+  display:flex;gap:9px;align-items:center;
+  background:var(--paper-raised);border:1px solid var(--border);border-radius:10px;
+  padding:7px;text-decoration:none;color:inherit;
+}
+.poster-art{
+  width:40px;height:40px;border-radius:8px;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;color:#fff;
+}
+.poster-art svg{width:18px;height:18px}
+.poster h4{
+  font-family:var(--font-display);font-weight:600;font-size:12px;line-height:1.3;margin:0;color:var(--ink);
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
+}
+
+/* ---- states ---- */
+.state{
+  display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;
+  padding-block:52px 40px;border:1px dashed var(--border);border-radius:14px;background:var(--paper-raised);
+}
+.state .stamp{
+  width:46px;height:46px;border:2px solid var(--accent);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:var(--accent);
+  font-family:var(--font-display);font-weight:700;font-size:19px;transform:rotate(-8deg);opacity:.9;
+}
+.state h2{font-family:var(--font-display);font-size:20px;margin:0;font-weight:700}
+.state p{margin:0;color:var(--muted);font-size:14px;max-width:38ch;line-height:1.5}
+.state .next-run{
+  font-family:var(--font-mono);font-size:12px;color:var(--accent);background:var(--accent-soft);
+  padding:4px 10px;border-radius:999px;margin-top:2px;
+}
+
+.skeleton{display:flex;flex-direction:column;gap:18px}
+.skel-hero{height:188px;border-radius:16px;background:linear-gradient(90deg,var(--border),var(--paper-raised),var(--border));background-size:200% 100%;animation:shimmer 1.6s infinite linear}
+.skel-line{height:14px;border-radius:5px;background:linear-gradient(90deg,var(--border),var(--paper-raised),var(--border));background-size:200% 100%;animation:shimmer 1.6s infinite linear}
+@media (prefers-reduced-motion: reduce){.skel-line,.skel-hero{animation:none}}
+@keyframes shimmer{to{background-position:-200% 0}}
+.skel-group{display:flex;flex-direction:column;gap:10px}
+.skel-line.w1{width:30%;height:18px}
+.skel-line.w2{width:85%}
+.skel-line.w3{width:95%}
+
+/* ---- footer ---- */
+.footer{text-align:center;display:flex;flex-direction:column;gap:5px}
+.footer p{margin:0;font-family:var(--font-mono);font-size:10.5px;color:var(--muted);letter-spacing:.01em}
+.footer p:last-child{color:var(--accent);opacity:.85}
+</style>
+
+<div class="masthead-bar">
+  <div class="brand">
+    <img class="brand-avatar" alt="" aria-hidden="true" src="icon-192.png">
+    <div class="brand-text">
+      <div class="brand-name"><span class="live-dot" aria-hidden="true"></span>ĐIỂM TIN SÁNG</div>
+      <div class="brand-sub">Kiên Bán Nhà · Cố vấn đầu tư BĐS</div>
+    </div>
+  </div>
+  <div class="masthead-time" id="mastheadTime">—</div>
+</div>
+
+<nav class="catnav" id="catnav" aria-label="Chuyên mục" hidden></nav>
+
+<div class="ticker-bar" id="tickerBar" hidden></div>
+
+<div class="side-rail left" id="railLeft" aria-hidden="true"></div>
+<div class="side-rail right" id="railRight" aria-hidden="true"></div>
+
+<div class="page">
+  <div class="edition-row">
+    <span id="editionDate">Đang tải…</span>
+    <span class="dot">·</span>
+    <span id="editionMeta">—</span>
+  </div>
+
+  <nav class="archive" id="archive" aria-label="Số cũ" hidden></nav>
+
+  <main id="main">
+    <div class="skeleton" aria-hidden="true">
+      <div class="skel-hero"></div>
+      <div class="skel-group">
+        <div class="skel-line w1"></div>
+        <div class="skel-line w2"></div>
+        <div class="skel-line w3"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Tự động tổng hợp mỗi ngày trước 7:00 sáng (giờ Việt Nam) · Nguồn: tin tức công khai</p>
+    <p>Biên soạn riêng cho Kiên Bán Nhà — Chuyên gia cố vấn đầu tư BĐS cao cấp, since 1995</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var mainEl = document.getElementById('main');
+  var archiveEl = document.getElementById('archive');
+  var dateEl = document.getElementById('editionDate');
+  var metaEl = document.getElementById('editionMeta');
+  var railLeftEl = document.getElementById('railLeft');
+  var railRightEl = document.getElementById('railRight');
+  var catnavEl = document.getElementById('catnav');
+  var tickerBarEl = document.getElementById('tickerBar');
+  var clockEl = document.getElementById('mastheadTime');
+
+  var WEEKDAYS = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+
+  var CAT_COLOR_VAR = {
+    'Bất động sản':'--cat-re',
+    'Luật & chính sách đất đai':'--cat-law',
+    'Nghị quyết & chính sách mới':'--cat-policy',
+    'Tài chính trong & ngoài nước':'--cat-fin',
+    'Thời sự khác':'--cat-world'
+  };
+
+  var CAT_ICON_KEY = {
+    'Bất động sản':'realestate',
+    'Luật & chính sách đất đai':'law',
+    'Nghị quyết & chính sách mới':'policy',
+    'Tài chính trong & ngoài nước':'finance',
+    'Thời sự khác':'world'
+  };
+
+  var ICONS = {
+    realestate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-7h6v7"/><path d="M4 21h16"/></svg>',
+    law: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 7l-3 5a3 3 0 0 0 6 0z"/><path d="M19 7l-3 5a3 3 0 0 0 6 0z"/><path d="M5 7h5"/><path d="M14 7h5"/><path d="M7 21h10"/></svg>',
+    policy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h9a1 1 0 0 1 1 1v15l-5-3-5 3V4a1 1 0 0 1 1-1z"/><path d="M5 7v13"/><path d="M5 7L9 3"/></svg>',
+    finance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>',
+    world: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>'
+  };
+
+  var TREND_GLYPH = { up:'▲', down:'▼', flat:'—' };
+
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+  function parseISODate(iso){
+    var parts = iso.split('-');
+    return new Date(Date.UTC(+parts[0], +parts[1]-1, +parts[2], 12, 0, 0));
+  }
+
+  function longLabel(iso){
+    var d = parseISODate(iso);
+    return WEEKDAYS[d.getUTCDay()] + ', ' + pad(d.getUTCDate()) + '/' + pad(d.getUTCMonth()+1) + '/' + d.getUTCFullYear();
+  }
+
+  function shortLabel(iso){
+    var d = parseISODate(iso);
+    return pad(d.getUTCDate()) + '/' + pad(d.getUTCMonth()+1);
+  }
+
+  function timeLabel(isoTimestamp){
+    try{
+      var d = new Date(isoTimestamp);
+      if(isNaN(d.getTime())) return null;
+      return 'cập nhật ' + d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Ho_Chi_Minh'});
+    }catch(e){ return null; }
+  }
+
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  function firstSentence(s){
+    if(!s) return '';
+    var m = String(s).match(/^.*?[.!?](?:\s|$)/);
+    return m ? m[0].trim() : s;
+  }
+
+  function tickClock(){
+    try{
+      clockEl.textContent = new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Ho_Chi_Minh'}) + ' · Hà Nội';
+    }catch(e){ /* no-op */ }
+  }
+  tickClock();
+  setInterval(tickClock, 30000);
+
+  function clearRails(){
+    if(railLeftEl) railLeftEl.innerHTML = '';
+    if(railRightEl) railRightEl.innerHTML = '';
+  }
+
+  function posterHtml(item){
+    var catVar = CAT_COLOR_VAR[item._cat] || '--cat-world';
+    var icon = ICONS[CAT_ICON_KEY[item._cat]] || ICONS.world;
+    var open = item.source_url ? ('<a class="poster" href="' + encodeURI(item.source_url) + '" target="_blank" rel="noopener">') : '<div class="poster">';
+    var html = open;
+    html += '<div class="poster-art" style="background:linear-gradient(160deg, var(' + catVar + '), color-mix(in srgb, var(' + catVar + ') 55%, #000 35%))">' + icon + '</div>';
+    html += '<h4>' + escapeHtml(item.title || '') + '</h4>';
+    html += item.source_url ? '</a>' : '</div>';
+    return html;
+  }
+
+  function populateRails(data){
+    if(!railLeftEl || !railRightEl) return;
+    var flat = [];
+    (Array.isArray(data.groups) ? data.groups : []).forEach(function(group){
+      (Array.isArray(group.items) ? group.items : []).forEach(function(item){
+        if(data.highlight && item.title === data.highlight.title) return;
+        flat.push({ title:item.title, source_url:item.source_url, _cat:group.category });
+      });
+    });
+    flat = flat.slice(0, 6);
+    var left = [], right = [];
+    flat.forEach(function(item, i){ (i % 2 === 0 ? left : right).push(item); });
+    railLeftEl.innerHTML = left.length ? ('<div class="rail-head">Đáng chú ý</div>' + left.map(posterHtml).join('')) : '';
+    railRightEl.innerHTML = right.length ? ('<div class="rail-head">Đáng chú ý</div>' + right.map(posterHtml).join('')) : '';
+  }
+
+  function renderUnavailable(){
+    clearRails();
+    catnavEl.hidden = true;
+    tickerBarEl.hidden = true;
+    mainEl.innerHTML =
+      '<div class="state">' +
+        '<div class="stamp">?</div>' +
+        '<h2>Chưa thể tải dữ liệu</h2>' +
+        '<p>Trang chưa được cấp quyền đọc dữ liệu bản tin trong trình xem này.</p>' +
+      '</div>';
+    dateEl.textContent = 'Không khả dụng';
+    metaEl.textContent = '—';
+  }
+
+  function renderFirstRunEmpty(){
+    clearRails();
+    archiveEl.hidden = true;
+    archiveEl.innerHTML = '';
+    catnavEl.hidden = true;
+    tickerBarEl.hidden = true;
+    dateEl.textContent = 'Chưa có số nào';
+    metaEl.textContent = '—';
+    mainEl.innerHTML =
+      '<div class="state">' +
+        '<div class="stamp">✓</div>' +
+        '<h2>Số báo đầu tiên đang được chuẩn bị</h2>' +
+        '<p>Tác vụ tổng hợp tin tức đã được lên lịch. Số báo đầu tiên sẽ tự động xuất hiện ở đây.</p>' +
+        '<span class="next-run">Chạy hằng ngày trước 7:00 sáng</span>' +
+      '</div>';
+  }
+
+  function renderError(err){
+    clearRails();
+    mainEl.innerHTML =
+      '<div class="state">' +
+        '<div class="stamp">!</div>' +
+        '<h2>Có lỗi khi tải bản tin</h2>' +
+        '<p>' + escapeHtml(err && err.message ? err.message : 'Vui lòng thử tải lại trang.') + '</p>' +
+      '</div>';
+  }
+
+  function renderArchive(order, selected){
+    if(order.length <= 1){ archiveEl.hidden = true; archiveEl.innerHTML=''; return; }
+    archiveEl.hidden = false;
+    archiveEl.innerHTML = '';
+    order.forEach(function(id){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'issue-pill' + (id === selected ? ' is-active' : '');
+      btn.textContent = shortLabel(id);
+      btn.setAttribute('aria-pressed', id === selected ? 'true' : 'false');
+      btn.addEventListener('click', function(){ selectDate(id); });
+      archiveEl.appendChild(btn);
+    });
+  }
+
+  function renderCatNav(groups){
+    catnavEl.innerHTML = '';
+    var any = false;
+    groups.forEach(function(group, idx){
+      var items = Array.isArray(group.items) ? group.items : [];
+      if(!items.length) return;
+      any = true;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = group.category || 'Khác';
+      btn.addEventListener('click', function(){
+        var target = document.getElementById('sec-' + idx);
+        if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+      catnavEl.appendChild(btn);
+    });
+    catnavEl.hidden = !any;
+  }
+
+  function heroHtml(h){
+    if(!h || !h.title) return '';
+    var catVar = CAT_COLOR_VAR[h.category] || '--cat-policy';
+    var icon = ICONS[h.icon] || ICONS.policy;
+    var html = '<div class="hero" style="--hero-cat:var(' + catVar + ')">';
+    html += '<div class="hero-bg"></div>';
+    html += '<div class="hero-icon">' + icon + '</div>';
+    html += '<div class="hero-scrim"></div>';
+    html += '<div class="hero-content">';
+    html += '<div class="hero-badges"><span class="badge-pin">Điểm nhấn</span>' + (h.category ? '<span class="badge-cat">' + escapeHtml(h.category) + '</span>' : '') + '</div>';
+    html += '<h2>' + escapeHtml(h.title) + '</h2>';
+    if(h.summary) html += '<p>' + escapeHtml(h.summary) + '</p>';
+    if(h.source_name || h.source_url){
+      html += '<div class="source">';
+      if(h.source_url){
+        html += '<a href="' + encodeURI(h.source_url) + '" target="_blank" rel="noopener">' + escapeHtml(h.source_name || 'Nguồn') + '</a>';
+      } else {
+        html += escapeHtml(h.source_name);
+      }
+      html += '</div>';
+    }
+    html += '</div></div>';
+    return html;
+  }
+
+  function renderTicker(stats){
+    if(!Array.isArray(stats) || !stats.length){ tickerBarEl.hidden = true; tickerBarEl.innerHTML=''; return; }
+    tickerBarEl.hidden = false;
+    var html = '';
+    stats.slice(0,5).forEach(function(s){
+      var trend = (s.trend === 'up' || s.trend === 'down') ? s.trend : 'flat';
+      html += '<div class="ticker-item">';
+      html += '<span class="t-label">' + escapeHtml(s.label || '') + '</span>';
+      html += '<span class="t-value">' + escapeHtml(s.value || '') + '</span>';
+      html += '<span class="t-trend ' + trend + '">' + TREND_GLYPH[trend] + '</span>';
+      if(s.note) html += '<span class="t-note">' + escapeHtml(s.note) + '</span>';
+      html += '</div>';
+    });
+    tickerBarEl.innerHTML = html;
+  }
+
+  function cardHtml(item, catVar, iconKey){
+    var icon = ICONS[iconKey] || ICONS.world;
+    var html = item.source_url ? '<a class="card" href="' + encodeURI(item.source_url) + '" target="_blank" rel="noopener">' : '<div class="card">';
+    html += '<div class="card-thumb" style="background:linear-gradient(160deg, var(' + catVar + '), color-mix(in srgb, var(' + catVar + ') 55%, #000 35%))">' + icon + '</div>';
+    html += '<div class="card-body">';
+    html += '<h3>' + escapeHtml(item.title || '(Không có tiêu đề)') + '</h3>';
+    if(item.summary) html += '<p class="gist">' + escapeHtml(firstSentence(item.summary)) + '</p>';
+    if(item.source_name) html += '<div class="src" style="--cat-current:var(' + catVar + ')">' + escapeHtml(item.source_name) + '</div>';
+    html += '</div>';
+    html += item.source_url ? '</a>' : '</div>';
+    return html;
+  }
+
+  function renderDigest(iso, data){
+    dateEl.textContent = longLabel(iso);
+    var t = timeLabel(data.generated_at);
+    metaEl.textContent = t || 'tổng hợp tự động';
+
+    var groups = Array.isArray(data.groups) ? data.groups : [];
+    renderTicker(data.stats);
+    renderCatNav(groups);
+
+    if(!groups.length){
+      clearRails();
+      mainEl.innerHTML =
+        '<div class="state">' +
+          '<div class="stamp">·</div>' +
+          '<h2>Số này chưa có tin</h2>' +
+          '<p>Không có mục tin tức nào được ghi nhận cho ngày này.</p>' +
+        '</div>';
+      return;
+    }
+
+    populateRails(data);
+
+    var html = heroHtml(data.highlight);
+    html += '<main style="display:flex;flex-direction:column;gap:22px">';
+    groups.forEach(function(group, idx){
+      var items = Array.isArray(group.items) ? group.items : [];
+      if(!items.length) return;
+      var catVar = CAT_COLOR_VAR[group.category] || '--cat-world';
+      var iconKey = CAT_ICON_KEY[group.category] || 'world';
+      html += '<section class="section" id="sec-' + idx + '">';
+      html += '<div class="section-head"><span class="section-bar" style="background:var(' + catVar + ')"></span><h2>' + escapeHtml(group.category || 'Khác') + '</h2><div class="rule"></div><span class="section-count">' + items.length + '</span></div>';
+      html += '<div class="card-grid">';
+      items.forEach(function(item){
+        html += cardHtml(item, catVar, iconKey);
+      });
+      html += '</div>';
+      html += '</section>';
+    });
+    html += '</main>';
+    mainEl.innerHTML = html;
+  }
+
+  var docsById = {};
+  var order = [];
+  var selected = null;
+
+  function selectDate(id){
+    if(!docsById[id]) return;
+    selected = id;
+    renderArchive(order, selected);
+    renderDigest(id, docsById[id]);
+  }
+
+  async function start(){
+    try{
+      var res = await fetch('data/digests.json?t=' + Date.now(), { cache:'no-store' });
+      if(!res.ok) throw new Error('Không tải được dữ liệu (HTTP ' + res.status + ')');
+      var list = await res.json();
+      if(!Array.isArray(list) || !list.length){ renderFirstRunEmpty(); return; }
+      list.sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+      docsById = {}; order = [];
+      list.slice(0,30).forEach(function(d){ docsById[d.date] = d; order.push(d.date); });
+      selected = order[0];
+      renderArchive(order, selected);
+      renderDigest(selected, docsById[selected]);
+    }catch(err){ renderError(err); }
+  }
+
+  start();
+})();
+</script>
+
+</body></html>
