@@ -1,6 +1,6 @@
 ---
 name: "edit-video-marvel"
-description: "Dựng video cho Kiên theo phong cách trailer điện ảnh siêu anh hùng (kiểu Marvel): hook cold-open, nhạc epic dựng dần, cắt theo beat, speed ramp, tiêu đề slam kim loại, letterbox, grade teal–orange, kết bằng thẻ thương hiệu. Gộp toàn bộ kỹ năng đã huấn luyện (Loại 2 YouTube/Shorts, Loại 3 TikTok/Facebook, quy tắc edit Kiên, video-shotcraft, Remotion, HyperFrames, media-use, vidIQ, ElevenLabs, Canva, Drive, Notion). Dùng khi Kiên nói: edit video Marvel, làm kiểu trailer Marvel/Avengers, video siêu anh hùng, video epic/điện ảnh hoành tráng, teaser dự án kiểu phim bom tấn."
+description: "Dựng video cho Kiên theo phong cách trailer điện ảnh siêu anh hùng (kiểu Marvel): hook cold-open, nhạc epic dựng dần, cắt theo beat, speed ramp, tiêu đề slam kim loại, letterbox, grade teal–orange, kết bằng thẻ thương hiệu. Gộp toàn bộ kỹ năng đã huấn luyện (Loại 2 YouTube/Shorts, Loại 3 TikTok/Facebook, quy tắc edit Kiên, video-shotcraft, Remotion, HyperFrames, media-use, vidIQ, ElevenLabs, Canva, Drive, Notion). Dùng khi Kiên nói: edit video Marvel, làm kiểu trailer Marvel/Avengers, video siêu anh hùng, video epic/điện ảnh hoành tráng, teaser dự án kiểu phim bom tấn, làm giống video biệt thự rừng / xen kẽ talking head BĐS với ảnh phối cảnh, chữ to kiểu số lăn – chữ viết tay – thẻ ảnh nổi."
 ---
 
 # Edit video Marvel — trailer bom tấn cho Kiên
@@ -11,7 +11,10 @@ Xưng **"em – anh"**. Mục tiêu: biến cảnh quay của Kiên (dự án B�
 - `references/ngu-phap-marvel.md` — cấu trúc 5 hồi, kho hiệu ứng, bảng màu, font, thông số chuẩn.
 - `references/ban-do-skill-plugin.md` — skill/plugin nào làm bước nào, gọi thế nào, lỗi hay gặp.
 - `references/quy-tac-kien.md` — toàn bộ quy tắc cố định của Kiên (bắt buộc đọc trước khi dựng).
-- `templates/` — component Remotion mẫu: `MarvelTitle.tsx`, `Letterbox.tsx`, `BrandFlip.tsx`, `beats.py`.
+- `references/mau-xen-ke-talking-head-bds.md` — **mẫu học từ video Biệt thự Rừng**: dòng thời gian từng giây, 12 hiệu ứng chữ (T1–T12), 8 kỹ thuật B-roll (B1–B8), 7 chuyển cảnh (X1–X7), cấu trúc nhạc/SFX, bảng màu và font đo từ video.
+- `templates/` — component Remotion mẫu:
+  - Trailer: `MarvelTitle.tsx`, `Letterbox.tsx`, `BrandFlip.tsx`, `beats.py`.
+  - Mẫu xen kẽ: `TextFx.tsx` (TypeOn, BlurIn, NumberRoll, KeywordStack, CtaLock, bảng COLORS/FONTS), `BrollFx.tsx` (KenBurns, FloatCard, CardGrid, whipStyle, LeakFlash, SoftLeak), `fonts.ts` (nạp Anton, Montserrat, Great Vibes, Be Vietnam Pro có tiếng Việt).
 
 ## 0. Bản quyền & thương hiệu (luôn áp dụng)
 - **Chỉ học phong cách, không lấy tài sản của Marvel/Disney.** Không dùng logo "MARVEL STUDIOS", không dùng nhạc chính thức (Avengers theme…), không chèn cảnh phim, không dùng tên/trang phục nhân vật làm hình ảnh chính.
@@ -25,6 +28,7 @@ Xưng **"em – anh"**. Mục tiêu: biến cảnh quay của Kiên (dự án B�
 | Nhiều cảnh đời thường / flycam / nội khu, có hoặc không có voice | **M1 – Trailer thuần** | 9:16 1080×1920 (kèm 16:9 nếu có nguồn ngang) | 60–90s |
 | Kiên nói thẳng camera về một dự án/tin tức | **M2 – Talking-head bọc trailer**: cold open + intro thương hiệu 6–8s, thân bài giữ đúng Loại 2/Loại 3, chèn 2–3 "khoảnh khắc trailer" ở ý đắt nhất, outro trailer | 9:16 (Loại 3) hoặc 16:9 (Loại 2 Kiểu L) | >1 phút |
 | Chỉ có ảnh phối cảnh / ảnh tĩnh / mặt bằng | **M3 – Teaser ảnh**: 2.5D parallax, push-in, light sweep, chữ slam | 9:16 + 16:9 | 30–60s |
+| Kiên nói tại dự án + có bộ ảnh/video phối cảnh, nhà mẫu; hoặc Kiên nói "làm giống video biệt thự rừng / xen kẽ talking head" | **M4 – Xen kẽ talking-head BĐS** (theo `references/mau-xen-ke-talking-head-bds.md`): voice liền mạch, A-roll ~25% (hook, giá, CTA), B-roll ~75%, chữ to đổi mỗi 1–2s, không phụ đề full | 9:16 | 1:20–1:45 |
 
 Kiên đã nói rõ chế độ → làm luôn, không hỏi lại. Chưa rõ → nhìn contact sheet, đề xuất 1 chế độ kèm lý do rồi hỏi **một** câu.
 
@@ -36,6 +40,8 @@ Kiên đã nói rõ chế độ → làm luôn, không hỏi lại. Chưa rõ �
 5. **Đỉnh & chốt (80–100%)** — cú **smash cut** từ ồn ào sang tĩnh lặng (kiểu C), tiêu đề lớn slam, logo/tên dự án, CTA, thẻ "COMING SOON / MỞ BÁN 12.2026", button kiểu post-credit (1 câu đùa hoặc gợi tập sau) nếu Kiên muốn.
 
 Chi tiết từng hồi + số frame: `references/ngu-phap-marvel.md`.
+
+**M4 dùng khung nội dung riêng** (đã đo từ video mẫu): hook câu hỏi 0–4s → "Qua video này" 5–7s → tên dự án 8–10s → quy mô → các dòng sản phẩm (lưới thẻ) → điểm khác biệt thiết kế (chuỗi ảnh nội thất, 1 ảnh = 1 ý) → cảnh quan, diện tích (thẻ ảnh nổi + số) → giá (A-roll trong nhà mẫu) → chính sách thanh toán (số lớn liên tiếp, nhạc dồn) → CTA "Inbox ngay nhận layout chi tiết". Có thể ghép hồi 1–2 của trailer Marvel lên đầu M4.
 
 ## 3. Quy tắc cố định của Kiên — KHÔNG được phá
 (Đầy đủ ở `references/quy-tac-kien.md`.)
@@ -52,6 +58,7 @@ Chi tiết từng hồi + số frame: `references/ngu-phap-marvel.md`.
 - Thay chớp trắng bằng **dip to black 4–6 frame**, light leak mềm (opacity ≤0.35, ≥8 frame), hoặc cắt cứng vào đen.
 - Tiêu đề hiện bằng **scale + blur 0,2–0,3s rồi đứng yên**, không giật.
 - Chỉ bật flash/shake khi Kiên **ghi rõ trong tin nhắn** cho video đó; vẫn không bao giờ áp lên A-roll.
+- Ba kỹ thuật của video mẫu M4 trái quy tắc nên **mặc định tắt**: punch-in A-roll (X7), whip-blur (X2), light leak lóe (X3). Kiên nói "chuyển cảnh như video mẫu" / "làm y video biệt thự rừng" thì coi là cho phép và bật cả ba cho video đó.
 
 ## 4. Quy trình
 1. **Nhận nguồn** — từ Mac (Remote Control) hoặc Google Drive (`mcp__Google_Drive__search_files` → `download_file_content`). Tách audio `-c:a copy`, làm contact sheet đầu/giữa/cuối mỗi clip, chấm điểm cảnh "anh hùng" (đi về camera, low-angle, flycam lướt, cửa mở, ánh nắng, người nhìn xa).
@@ -67,6 +74,7 @@ Chi tiết từng hồi + số frame: `references/ngu-phap-marvel.md`.
 10. **Giao** — `SendUserFile` (file >25MB thì tách rồi concat), lưu Downloads. Kèm: tiêu đề (vidIQ `generate_titles` + `score_title`), thumbnail (vidIQ `generate_thumbnail`/`score_thumbnail` hoặc Canva), hashtag. Ghi doc vào project "sản xuất video" (`marvel-<du-an>-video.md`).
 
 ## 5. Chữ & đồ họa
+- **Bộ chữ M4** (dùng được cho mọi chế độ): 4 vai font — condensed in hoa cho từ khóa, sans hình học đậm cho số, chữ viết tay đè chéo cho từ cảm xúc, sans mảnh cho kicker. Số trên nền tối → vàng kem/xanh ngọc; trên nền sáng → navy/xanh lá đậm; mỗi khung 1 màu nhấn. Hiệu ứng: gõ từng ký tự, blur-in, số lăn slot, chữ ra bằng motion-blur, chữ sau lưng người. Chi tiết T1–T12.
 - **Tiêu đề slam** (`MarvelTitle`): Anton/Oswald/Bebas Neue in hoa, tracking rộng, gradient kim loại (bạc → trắng, viền tối), hoặc khối đỏ #C8102E chữ trắng. Hiện bằng scale 1.15→1 + blur 12→0 trong 6–8 frame, giữ 1,5–2,5s. Chỉ 6–8 khoảnh khắc mỗi video.
 - **Thẻ chữ đen** giữa các cảnh: nền đen, chữ trắng 1–3 từ, 1.05→1 trong 5 frame rồi đứng yên, mỗi thẻ 0,6–1s, đặt trên beat.
 - **Kicker nhỏ** kiểu chú thích phim: "HÀ NỘI · 2026", "CHƯƠNG I: VỊ TRÍ" (Oswald 28–34, tracking 0.3em, opacity 0.85).
@@ -82,4 +90,5 @@ Chi tiết từng hồi + số frame: `references/ngu-phap-marvel.md`.
 - [ ] Da đúng curves của Kiên sau grade teal–orange.
 - [ ] Voice -14 LUFS, BGM duck, true peak ≤ -1 dBTP.
 - [ ] Trên 1 phút (trừ teaser được yêu cầu), không B-roll im lặng.
+- [ ] (M4) Chữ to đổi mỗi 1–2s, cảnh 2,5–4s; số chính sách đúng với tài liệu chủ đầu tư; CTA giữ ≥ 4s.
 - [ ] Đủ bản: 9:16 có BGM, 9:16 không BGM, (16:9 nếu có nguồn ngang); tiêu đề + thumbnail + hashtag.
