@@ -7,8 +7,8 @@ import { MapCamera, DrawPath, MapPin, Callout, Arc, CamKey } from "./kien/MapFx"
 import { KeywordStack, NumberRoll, TypeOn, BlurIn, COLORS } from "./kien/TextFx";
 
 const FPS = 30;
-// Thời lượng từng đoạn voice (giây). s2 đang là chỗ trống, thay bằng thời lượng thật khi có file.
-export const VO = [6.92, 11.0, 13.24, 9.87, 10.68, 9.64, 8.75];
+// Thời lượng từng đoạn voice (giây), đo từ file ElevenLabs.
+export const VO = [6.92, 10.98, 13.24, 9.87, 10.68, 9.64, 8.75];
 const LEAD = 0.4; // trước câu đầu
 const GAP = 0.45; // nghỉ giữa các đoạn
 const OUTRO = 3.0;
