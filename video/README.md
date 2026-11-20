@@ -34,6 +34,10 @@ npm run render   # xuất out/kien-demo.mp4 (H.264, crf 25)
 - `MarvelTitle.tsx`, `Letterbox.tsx`, `BrandFlip.tsx` – bộ trailer
 - `fonts.ts` – nạp Anton, Montserrat, Great Vibes, Be Vietnam Pro, Oswald (có tiếng Việt)
 
-`src/Root.tsx` có composition `KienDemo` 10 giây dùng các component trên.
+- `MapFx.tsx` – map flying: MapCamera (zoom/bay/nghiêng/xoay), DrawPath (ranh tự vẽ, sông neon, chữ dọc sông), ClipReveal, MapPin, Callout, Arc, Magnifier, DimCenterText, Text3D
+
+`src/Root.tsx` có 2 composition:
+- `KienDemo` 10 giây – hiệu ứng chữ, B-roll, trailer (`npm run render`)
+- `MapDemo` 12 giây – map flying trên bản đồ giả lập (`npm run render:map`). Thay `public/demo-map.jpg` bằng ảnh vệ tinh thật hoặc chuỗi ảnh Google Earth Studio, rồi vẽ lại các path theo ảnh.
 
 Lưu ý: chữ gradient (background-clip) cần `lineHeight ≥ 1.25` và `paddingTop` để không cắt mất dấu tiếng Việt.

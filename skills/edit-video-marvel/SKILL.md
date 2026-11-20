@@ -1,6 +1,6 @@
 ---
 name: "edit-video-marvel"
-description: "Dựng video cho Kiên theo phong cách trailer điện ảnh siêu anh hùng (kiểu Marvel): hook cold-open, nhạc epic dựng dần, cắt theo beat, speed ramp, tiêu đề slam kim loại, letterbox, grade teal–orange, kết bằng thẻ thương hiệu. Gộp toàn bộ kỹ năng đã huấn luyện (Loại 2 YouTube/Shorts, Loại 3 TikTok/Facebook, quy tắc edit Kiên, video-shotcraft, Remotion, HyperFrames, media-use, vidIQ, ElevenLabs, Canva, Drive, Notion). Dùng khi Kiên nói: edit video Marvel, làm kiểu trailer Marvel/Avengers, video siêu anh hùng, video epic/điện ảnh hoành tráng, teaser dự án kiểu phim bom tấn, làm giống video biệt thự rừng / xen kẽ talking head BĐS với ảnh phối cảnh, chữ to kiểu số lăn – chữ viết tay – thẻ ảnh nổi."
+description: "Dựng video cho Kiên theo phong cách trailer điện ảnh siêu anh hùng (kiểu Marvel): hook cold-open, nhạc epic dựng dần, cắt theo beat, speed ramp, tiêu đề slam kim loại, letterbox, grade teal–orange, kết bằng thẻ thương hiệu. Gộp toàn bộ kỹ năng đã huấn luyện (Loại 2 YouTube/Shorts, Loại 3 TikTok/Facebook, quy tắc edit Kiên, video-shotcraft, Remotion, HyperFrames, media-use, vidIQ, ElevenLabs, Canva, Drive, Notion). Dùng khi Kiên nói: edit video Marvel, làm kiểu trailer Marvel/Avengers, video siêu anh hùng, video epic/điện ảnh hoành tráng, teaser dự án kiểu phim bom tấn, làm giống video biệt thự rừng / xen kẽ talking head BĐS với ảnh phối cảnh, chữ to kiểu số lăn – chữ viết tay – thẻ ảnh nổi, video map flying / bản đồ vệ tinh bay, vẽ ranh dự án, ghim vị trí, kính lúp tìm dự án."
 ---
 
 # Edit video Marvel — trailer bom tấn cho Kiên
@@ -12,8 +12,10 @@ Xưng **"em – anh"**. Mục tiêu: biến cảnh quay của Kiên (dự án B�
 - `references/ban-do-skill-plugin.md` — skill/plugin nào làm bước nào, gọi thế nào, lỗi hay gặp.
 - `references/quy-tac-kien.md` — toàn bộ quy tắc cố định của Kiên (bắt buộc đọc trước khi dựng).
 - `references/mau-xen-ke-talking-head-bds.md` — **mẫu học từ video Biệt thự Rừng**: dòng thời gian từng giây, 12 hiệu ứng chữ (T1–T12), 8 kỹ thuật B-roll (B1–B8), 7 chuyển cảnh (X1–X7), cấu trúc nhạc/SFX, bảng màu và font đo từ video.
+- `references/mau-map-flying.md` — **mẫu học từ video King Park (map flying)**: dòng thời gian, 16 kỹ thuật bản đồ (MF1–MF16: ranh tự vẽ, mặt bằng hiện trong ranh, ghim, crash zoom, sông neon + chữ chạy dọc sông, chữ 3D, thẻ bay, nhãn đường dóng, kính lúp, tỉnh tô màu + vòng cung, mây chuyển cảnh, làm tối + chữ giữa, orbit), âm thanh, cách lấy nguồn bản đồ.
 - `templates/` — component Remotion mẫu:
   - Trailer: `MarvelTitle.tsx`, `Letterbox.tsx`, `BrandFlip.tsx`, `beats.py`.
+  - Map flying: `MapFx.tsx` (MapCamera, DrawPath, ClipReveal, MapPin, Callout, Arc, Magnifier, DimCenterText, Text3D).
   - Mẫu xen kẽ: `TextFx.tsx` (TypeOn, BlurIn, NumberRoll, KeywordStack, CtaLock, bảng COLORS/FONTS), `BrollFx.tsx` (KenBurns, FloatCard, CardGrid, whipStyle, LeakFlash, SoftLeak), `fonts.ts` (nạp Anton, Montserrat, Great Vibes, Be Vietnam Pro có tiếng Việt).
 
 ## 0. Bản quyền & thương hiệu (luôn áp dụng)
@@ -29,6 +31,7 @@ Xưng **"em – anh"**. Mục tiêu: biến cảnh quay của Kiên (dự án B�
 | Kiên nói thẳng camera về một dự án/tin tức | **M2 – Talking-head bọc trailer**: cold open + intro thương hiệu 6–8s, thân bài giữ đúng Loại 2/Loại 3, chèn 2–3 "khoảnh khắc trailer" ở ý đắt nhất, outro trailer | 9:16 (Loại 3) hoặc 16:9 (Loại 2 Kiểu L) | >1 phút |
 | Chỉ có ảnh phối cảnh / ảnh tĩnh / mặt bằng | **M3 – Teaser ảnh**: 2.5D parallax, push-in, light sweep, chữ slam | 9:16 + 16:9 | 30–60s |
 | Kiên nói tại dự án + có bộ ảnh/video phối cảnh, nhà mẫu; hoặc Kiên nói "làm giống video biệt thự rừng / xen kẽ talking head" | **M4 – Xen kẽ talking-head BĐS** (theo `references/mau-xen-ke-talking-head-bds.md`): voice liền mạch, A-roll ~25% (hook, giá, CTA), B-roll ~75%, chữ to đổi mỗi 1–2s, không phụ đề full | 9:16 | 1:20–1:45 |
+| Video phân tích vị trí / quy hoạch / kết nối vùng; hoặc Kiên nói "làm map flying / bay bản đồ như King Park" | **M5 – Map flying** (theo `references/mau-map-flying.md`): bản đồ vệ tinh là sân khấu, voice liền mạch, mỗi 3–6s một hành động bản đồ (zoom, vẽ ranh, ghim, nhãn, thẻ); Kiên xuất hiện ở hook/giá/CTA dạng thẻ ảnh nổi hoặc A-roll tách nền góc dưới | 9:16 | 1:30–2:00 |
 
 Kiên đã nói rõ chế độ → làm luôn, không hỏi lại. Chưa rõ → nhìn contact sheet, đề xuất 1 chế độ kèm lý do rồi hỏi **một** câu.
 
@@ -42,6 +45,9 @@ Kiên đã nói rõ chế độ → làm luôn, không hỏi lại. Chưa rõ �
 Chi tiết từng hồi + số frame: `references/ngu-phap-marvel.md`.
 
 **M4 dùng khung nội dung riêng** (đã đo từ video mẫu): hook câu hỏi 0–4s → "Qua video này" 5–7s → tên dự án 8–10s → quy mô → các dòng sản phẩm (lưới thẻ) → điểm khác biệt thiết kế (chuỗi ảnh nội thất, 1 ảnh = 1 ý) → cảnh quan, diện tích (thẻ ảnh nổi + số) → giá (A-roll trong nhà mẫu) → chính sách thanh toán (số lớn liên tiếp, nhạc dồn) → CTA "Inbox ngay nhận layout chi tiết". Có thể ghép hồi 1–2 của trailer Marvel lên đầu M4.
+
+**M5 khung nội dung** (đo từ video King Park): ranh dự án tự vẽ + mặt bằng hiện ra (0–2s) → zoom-out cấp tỉnh (vị trí) → fly-in, sông, quy mô bằng chữ 3D → số căn bằng thẻ bay → tiện ích bằng nhãn đường dóng → hạ tầng/KCN bằng loạt ghim → bối cảnh vùng (tỉnh tô màu, vòng cung) → kính lúp "tìm kiếm… kết quả: <dự án>" → so sánh "nếu giá cao / ngược lại nếu giá hợp lý" (làm tối + chữ giữa) → 4 nhãn cam lý do mua → orbit + câu chốt → thẻ người dẫn → end card liên hệ.
+Nguồn bản đồ: Google Earth Studio (giống mẫu nhất), ảnh vệ tinh tĩnh lớn + `MapCamera`, hoặc MapLibre/Mapbox/Cesium qua skill `remotion:remotion-maps`. Luôn giữ dòng ghi nguồn ảnh vệ tinh.
 
 ## 3. Quy tắc cố định của Kiên — KHÔNG được phá
 (Đầy đủ ở `references/quy-tac-kien.md`.)

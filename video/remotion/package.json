@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "remotion studio",
     "render": "remotion render KienDemo out/kien-demo.mp4",
+    "render:map": "remotion render MapDemo out/map-demo.mp4",
     "still": "remotion still KienDemo out/kien-demo.png --frame=90",
     "typecheck": "tsc --noEmit"
   },
