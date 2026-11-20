@@ -6,6 +6,7 @@ import { FloatCard, CardGrid } from "./kien/BrollFx";
 import { MarvelTitle } from "./kien/MarvelTitle";
 import { Letterbox } from "./kien/Letterbox";
 import { MapDemo } from "./MapDemo";
+import { GamudaCP, GAMUDA_FRAMES } from "./GamudaCP";
 
 loadFxFonts();
 
@@ -49,5 +50,6 @@ export const Root: React.FC = () => (
   <>
     <Composition id="KienDemo" component={KienDemo} durationInFrames={300} fps={30} width={1080} height={1920} />
     <Composition id="MapDemo" component={MapDemo} durationInFrames={360} fps={30} width={1080} height={1920} />
+    <Composition id="GamudaCP" component={GamudaCP} durationInFrames={GAMUDA_FRAMES} fps={30} width={1080} height={1920} />
   </>
 );
