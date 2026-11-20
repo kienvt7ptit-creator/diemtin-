@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="vi" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;800&family=Great+Vibes&family=Montserrat:wght@700;800&display=block&subset=vietnamese"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      /* Bảng màu + font của skill edit-video-marvel (mẫu xen kẽ talking-head BĐS). */
+      :root {
+        --ground: #1f2b22;
+        --ink: #ffffff;
+        --yellow: #f6de6e;
+        --teal-hi: #3fedf1;
+        --teal-lo: #07858c;
+        --font-condensed: "Anton", sans-serif;
+        --font-number: "Montserrat", sans-serif;
+        --font-script: "Great Vibes", cursive;
+        --font-small: "Be Vietnam Pro", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(120% 80% at 50% 20%, #2f4434 0%, var(--ground) 70%);
+      }
+      .scene {
+        position: absolute;
+        left: 140px;
+        right: 140px;
+        top: 520px;
+        display: block;
+      }
+      .kicker {
+        display: block;
+        font-family: var(--font-small);
+        font-weight: 500;
+        font-size: 40px;
+        color: var(--ink);
+        white-space: pre;
+      }
+      .kicker span {
+        opacity: 0;
+      }
+      .num {
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-family: var(--font-number);
+        font-weight: 800;
+        font-size: 230px;
+        line-height: 1;
+        color: var(--yellow);
+      }
+      .script {
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-family: var(--font-script);
+        font-size: 110px;
+        line-height: 1;
+        color: var(--ink);
+      }
+      .keyword {
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-family: var(--font-condensed);
+        font-size: 210px;
+        line-height: 1.3;
+        padding-top: 0.12em;
+        background-image: linear-gradient(180deg, var(--teal-hi), var(--teal-lo));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      #s2-script {
+        position: relative;
+        z-index: 2;
+        color: var(--teal-hi);
+        margin-top: -120px;
+        padding-left: 330px;
+        transform: rotate(-8deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="8"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Cảnh 1: kicker gõ từng ký tự (T1) + số blur-in (T5) + chữ viết tay -->
+      <div id="s1" class="scene clip" data-start="0" data-duration="4" data-track-index="0">
+        <div id="s1-kicker" class="kicker"></div>
+        <div id="s1-num" class="num">604</div>
+        <div id="s1-script" class="script">căn biệt thự</div>
+      </div>
+      <!-- Cảnh 2: kicker + từ khóa condensed gradient + script đè chéo (T2 + T3) -->
+      <div id="s2" class="scene clip" data-start="4" data-duration="4" data-track-index="1">
+        <div id="s2-kicker" class="kicker"></div>
+        <div id="s2-key" class="keyword">BIỆT THỰ</div>
+        <div id="s2-script" class="script" data-layout-allow-occlusion>Rừng</div>
+      </div>
+    </div>
+    <script>
+      // Tách chữ thành từng span để gõ từng ký tự (dựng sẵn, không phụ thuộc thời gian thực).
+      const typeSpans = (id, text) => {
+        const el = document.getElementById(id);
+        el.innerHTML = "";
+        for (const ch of Array.from(text)) {
+          const s = document.createElement("span");
+          s.textContent = ch;
+          el.appendChild(s);
+        }
+        return el.querySelectorAll("span");
+      };
+      const k1 = typeSpans("s1-kicker", "Chỉ vỏn vẹn");
+      const k2 = typeSpans("s2-kicker", "ECO RETREAT");
+
+      const tl = gsap.timeline({ paused: true });
+      const F = 1 / 30; // 1 frame
+
+      // Cảnh 1
+      tl.to(k1, { opacity: 1, duration: 0.001, stagger: F }, 0);
+      // Khung đầu không trống (thumbnail): số đã hiện mờ từ frame 0 rồi nét dần.
+      tl.fromTo("#s1-num", { opacity: 0.4, scale: 1.08, filter: "blur(14px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 9 * F, ease: "power3.out" }, 0);
+      tl.fromTo("#s1-script", { clipPath: "inset(0 100% 0 0)" },
+        { clipPath: "inset(0 0% 0 0)", duration: 0.45, ease: "power2.out" }, 0.8);
+      tl.to("#s1-num", { x: -180, opacity: 0, filter: "blur(10px)", duration: 5 * F, ease: "power2.in" }, 3.7);
+      tl.to(["#s1-kicker", "#s1-script"], { opacity: 0, duration: 5 * F }, 3.7);
+
+      // Cảnh 2
+      tl.to(k2, { opacity: 1, duration: 0.001, stagger: F }, 4.1);
+      tl.fromTo("#s2-key", { opacity: 0, scale: 1.08, filter: "blur(18px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 7 * F, ease: "power3.out" }, 4.4);
+      tl.fromTo("#s2-script", { clipPath: "inset(0 100% 0 0)" },
+        { clipPath: "inset(0 0% 0 0)", duration: 0.45, ease: "power2.out" }, 4.7);
+      tl.to(["#s2-kicker", "#s2-key", "#s2-script"], { opacity: 0, duration: 5 * F }, 7.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

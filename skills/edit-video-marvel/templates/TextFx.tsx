@@ -141,7 +141,7 @@ export const KeywordStack: React.FC<{
       <div style={{ position: "relative", display: "inline-block" }}>
         <BlurIn dur={dur + 10}>
           <span style={{ fontFamily: isNum ? FONTS.number : FONTS.condensed, fontWeight: isNum ? 800 : 400,
-            fontSize: isNum ? 150 : 132, lineHeight: 1, letterSpacing: isNum ? "-0.02em" : "0.01em",
+            fontSize: isNum ? 150 : 132, lineHeight: 1.3, paddingTop: "0.1em", letterSpacing: isNum ? "-0.02em" : "0.01em",
             ...fill(color), filter: "drop-shadow(0 4px 14px rgba(0,0,0,.35))" }}>
             {keyword}
           </span>

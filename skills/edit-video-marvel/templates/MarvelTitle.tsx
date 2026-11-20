@@ -74,7 +74,7 @@ export const MarvelTitle: React.FC<Props> = ({
                 color: "#FFFFFF",
                 fontFamily: "Anton",
                 fontSize: 128,
-                lineHeight: 1,
+                lineHeight: 1.25,
                 letterSpacing: "0.04em",
                 padding: "10px 28px 6px",
                 margin: "6px 0",
@@ -88,7 +88,8 @@ export const MarvelTitle: React.FC<Props> = ({
               style={{
                 fontFamily: "Anton",
                 fontSize: 140,
-                lineHeight: 0.98,
+                lineHeight: 1.3, // chừa chỗ cho dấu tiếng Việt (background-clip cắt phần vượt dòng)
+                paddingTop: "0.1em",
                 letterSpacing: "0.06em",
                 backgroundImage: METAL,
                 WebkitBackgroundClip: "text",
