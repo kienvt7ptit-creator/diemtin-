@@ -1,4 +1,4 @@
-// Hiệu ứng "map flying" học từ video King Park (mã MF1–MF16 trong references/mau-map-flying.md).
+// Hiệu ứng "map flying" học từ video King Park (mã MF1–MF17 trong references/mau-map-flying.md; MF17 = Tower3D).
 // Cách dùng: một tấm ảnh vệ tinh lớn (hoặc chuỗi ảnh Google Earth Studio) làm nền,
 // mọi lớp vẽ đặt theo TOẠ ĐỘ PIXEL CỦA TẤM BẢN ĐỒ bên trong <MapCamera>.
 // Khung 1080×1920, 30fps. Toàn bộ chuyển động lấy từ useCurrentFrame() (tất định).
@@ -44,12 +44,13 @@ export const MapCamera: React.FC<{
   keys: CamKey[];
   children?: React.ReactNode;
   overlay?: React.ReactNode; // lớp theo toạ độ màn hình (thẻ, chữ giữa khung)
-}> = ({ src, mapW, mapH, keys, children, overlay }) => {
+  background?: string; // nền phía sau tấm bản đồ (vd. gradient bầu trời khi camera nghiêng)
+}> = ({ src, mapW, mapH, keys, children, overlay, background = "#0d130f" }) => {
   const f = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const cam = camAt(keys, f);
   return (
-    <AbsoluteFill style={{ background: "#0d130f", overflow: "hidden", perspective: 1600 }}>
+    <AbsoluteFill style={{ background, overflow: "hidden", perspective: 1600 }}>
       <div
         style={{
           position: "absolute",
@@ -58,7 +59,9 @@ export const MapCamera: React.FC<{
           width: mapW,
           height: mapH,
           transformOrigin: "0 0",
-          transform: `rotateX(${cam.tilt}deg) rotate(${cam.rotate}deg) scale(${cam.zoom}) translate(${-cam.x}px, ${-cam.y}px)`,
+          transformStyle: "preserve-3d", // cho khối 3D (Tower3D) đứng lên khỏi mặt bản đồ
+          // scale3d để chiều cao khối 3D zoom cùng tỉ lệ với mặt bản đồ
+          transform: `rotateX(${cam.tilt}deg) rotate(${cam.rotate}deg) scale3d(${cam.zoom}, ${cam.zoom}, ${cam.zoom}) translate(${-cam.x}px, ${-cam.y}px)`,
         }}
       >
         <Img src={staticFile(src)} style={{ position: "absolute", inset: 0, width: mapW, height: mapH }} />
@@ -281,5 +284,41 @@ export const Text3D: React.FC<{ x: number; y: number; text: string; start?: numb
         {text}
       </div>
     </ScreenSize>
+  );
+};
+
+// ---------- Khối nhà 3D (MF17) ----------
+/** Khối hộp 3D mọc lên từ mặt bản đồ (toà tháp). Đặt trong <MapCamera>, toạ độ & kích thước theo pixel bản đồ.
+ *  w×d: mặt bằng, h: chiều cao (px bản đồ; 1 px ≈ m/px của tấm ảnh). Cần camera có tilt để thấy chiều cao. */
+export const Tower3D: React.FC<{
+  x: number; y: number; w: number; d: number; h: number; start?: number; dur?: number; rotate?: number;
+  facade?: string; roof?: string; glow?: string;
+}> = ({ x, y, w, d, h, start = 0, dur = 24, rotate = 0, facade = "#EEF3F1", roof = "#5E8F4E", glow = "#7FE7C4" }) => {
+  const f = useCurrentFrame() - start;
+  const p = f < 0 ? 0 : interpolate(f, [0, dur], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  const H = Math.max(0.01, h * p);
+  const floors = (shade: number): React.CSSProperties => ({
+    position: "absolute",
+    background: `repeating-linear-gradient(0deg, rgba(40,70,80,${0.55 * shade}) 0 1.2px, transparent 1.2px 3.4px),
+      repeating-linear-gradient(90deg, rgba(30,60,70,${0.35 * shade}) 0 1px, transparent 1px 5px), ${facade}`,
+    filter: `brightness(${shade})`,
+    outline: `0.6px solid ${glow}`,
+    backfaceVisibility: "visible",
+  });
+  if (p <= 0) return null;
+  return (
+    <div style={{ position: "absolute", left: x - w / 2, top: y - d / 2, width: w, height: d, transformStyle: "preserve-3d",
+      transform: `rotate(${rotate}deg)` }}>
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.35)", filter: "blur(3px)" }} />
+      {/* Bắc, Nam */}
+      <div style={{ ...floors(0.78), left: 0, top: 0, width: w, height: H, transformOrigin: "0 0", transform: "rotateX(90deg)" }} />
+      <div style={{ ...floors(1.0), left: 0, top: d, width: w, height: H, transformOrigin: "0 0", transform: "rotateX(90deg)" }} />
+      {/* Tây, Đông */}
+      <div style={{ ...floors(0.88), left: 0, top: 0, width: H, height: d, transformOrigin: "0 0", transform: "rotateY(-90deg)" }} />
+      <div style={{ ...floors(0.7), left: w, top: 0, width: H, height: d, transformOrigin: "0 0", transform: "rotateY(-90deg)" }} />
+      {/* Mái xanh */}
+      <div style={{ position: "absolute", left: 0, top: 0, width: w, height: d, background: roof, transform: `translateZ(${H}px)`,
+        boxShadow: `0 0 4px ${glow}`, outline: `0.8px solid ${glow}` }} />
+    </div>
   );
 };
