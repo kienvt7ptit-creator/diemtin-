@@ -3,7 +3,7 @@
 // Mặt bằng & phối cảnh: tài liệu Kiên cung cấp (Gamuda Land). Toạ độ dự án (Google Maps): 20.9596805, 105.8584847.
 import React from "react";
 import { AbsoluteFill, Audio, Easing, Img, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { MapCamera, DrawPath, MapPin, Callout, Arc, CamKey, Tower3D } from "./kien/MapFx";
+import { MapCamera, DrawPath, MapPin, Callout, Arc, CamKey, TowerY } from "./kien/MapFx";
 import { KeywordStack, NumberRoll, TypeOn, BlurIn, COLORS } from "./kien/TextFx";
 
 const FPS = 30;
@@ -39,14 +39,16 @@ const PVCG = "M840,1300 L870,1800 L900,2250 L990,2880 L1200,3300 L1560,3990";
 const SKY = "linear-gradient(180deg, #8fb8d8 0%, #cfe0e8 22%, #e9e4d6 30%, #3a4a3a 31%)";
 const SITE: [number, number] = [1900, 2715]; // tâm khu đất (khoảng trống phía Đông ghim Google Maps)
 
-// 3 toà tháp mô phỏng (mặt bằng chữ L, ~1,1 m/px; chiều cao minh hoạ)
+// 3 toà tháp mô phỏng hình chữ Y (lõi + 3 cánh, theo mặt bằng tổng thể; ~1,1 m/px; chiều cao minh hoạ)
 const TowerSet: React.FC<{ start?: number; dur?: number }> = ({ start = 0, dur = 24 }) => (
   <>
-    {[-115, 0, 115].map((dx, i) => (
-      <React.Fragment key={i}>
-        <Tower3D x={SITE[0] + dx} y={SITE[1] - 8} w={66} d={22} h={118} start={start + i * 5} dur={dur} />
-        <Tower3D x={SITE[0] + dx + 22} y={SITE[1] + 22} w={22} d={44} h={118} start={start + i * 5} dur={dur} />
-      </React.Fragment>
+    {[
+      { dx: -120, dy: 6, angle: -90 },
+      { dx: 0, dy: -6, angle: 90 },
+      { dx: 120, dy: 6, angle: -90 },
+    ].map((t, i) => (
+      <TowerY key={i} x={SITE[0] + t.dx} y={SITE[1] + t.dy} h={118} wing={40} wingW={16} core={20} angle={t.angle}
+        start={start + i * 5} dur={dur} />
     ))}
   </>
 );

@@ -322,3 +322,21 @@ export const Tower3D: React.FC<{
     </div>
   );
 };
+
+/** MF17b: toà tháp chữ Y – lõi giữa + 3 cánh lệch nhau 120°. angle = hướng cánh thứ nhất (độ, 0 = hướng Đông, chiều kim đồng hồ). */
+export const TowerY: React.FC<{
+  x: number; y: number; h: number; wing?: number; wingW?: number; core?: number; angle?: number; start?: number; dur?: number;
+  facade?: string; roof?: string; glow?: string;
+}> = ({ x, y, h, wing = 40, wingW = 16, core = 20, angle = -90, start = 0, dur = 24, ...style }) => (
+  <>
+    <Tower3D x={x} y={y} w={core} d={core} h={h} start={start} dur={dur} rotate={angle} {...style} />
+    {[0, 120, 240].map((a) => {
+      const r = ((angle + a) * Math.PI) / 180;
+      const off = core / 2 + wing / 2 - 2;
+      return (
+        <Tower3D key={a} x={x + Math.cos(r) * off} y={y + Math.sin(r) * off} w={wing} d={wingW} h={h}
+          start={start} dur={dur} rotate={angle + a} {...style} />
+      );
+    })}
+  </>
+);
