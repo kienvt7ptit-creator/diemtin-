@@ -43,9 +43,9 @@ const SITE: [number, number] = [1900, 2715]; // tâm khu đất (khoảng trốn
 const TowerSet: React.FC<{ start?: number; dur?: number }> = ({ start = 0, dur = 24 }) => (
   <>
     {[
-      { dx: -120, dy: 6, angle: -90 },
-      { dx: 0, dy: -6, angle: 90 },
-      { dx: 120, dy: 6, angle: -90 },
+      { dx: -120, dy: 0, angle: -90 },
+      { dx: 0, dy: 0, angle: -90 },
+      { dx: 120, dy: 0, angle: -90 },
     ].map((t, i) => (
       <TowerY key={i} x={SITE[0] + t.dx} y={SITE[1] + t.dy} h={118} wing={40} wingW={16} core={20} angle={t.angle}
         start={start + i * 5} dur={dur} />
@@ -291,7 +291,17 @@ const SCENES = [S1, S2, S3, S4, S8, S5, S6, S7];
 
 // ---------- Lớp thương hiệu ----------
 const Logo: React.FC = () => (
-  <Img src={staticFile("gcp/logo.png")} style={{ position: "absolute", top: 238, right: 36, width: 420 }} />
+  // Logo Kiên Bán Nhà (420×124) – vá dòng số điện thoại thành 0969 950 111
+  <div style={{ position: "absolute", top: 70, right: 24, width: 420, height: 124 }}>
+    <Img src={staticFile("gcp/logo.png")} style={{ position: "absolute", inset: 0, width: 420 }} />
+    <div style={{ position: "absolute", left: 76, top: 78, width: 228, height: 30, borderRadius: 6, filter: "blur(2px)",
+      background: "linear-gradient(90deg, rgb(36,44,62), rgb(40,48,66) 60%, rgb(44,52,70))" }} />
+    <div style={{ position: "absolute", left: 78, top: 72, width: 224, height: 40, display: "flex", alignItems: "center",
+      fontFamily: "Montserrat", fontWeight: 800, fontSize: 30, letterSpacing: "0.01em", color: "rgb(244,196,82)",
+      whiteSpace: "nowrap", lineHeight: 1 }}>
+      0969 950 111
+    </div>
+  </div>
 );
 const Watermark: React.FC = () => (
   <div style={{ position: "absolute", top: 930, left: 0, right: 0, textAlign: "center", fontFamily: "Montserrat", fontWeight: 700,
