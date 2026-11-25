@@ -169,43 +169,62 @@ const S4: React.FC = () => {
   );
 };
 
-// Tiện ích trên mặt bằng tổng thể (toạ độ pixel ảnh masterplan 2000×1237)
-const AMEN: { x: number; y: number; small: string; big: string; at: number; dx: number; dy: number }[] = [
-  { x: 1070, y: 240, small: "Làn bơi", big: "OLYMPIC", at: 2.0, dx: 90, dy: 150 },
-  { x: 910, y: 420, small: "Sân", big: "TENNIS", at: 3.4, dx: -90, dy: 140 },
-  { x: 650, y: 630, small: "Sân", big: "PICKLEBALL", at: 4.6, dx: 100, dy: 130 },
-  { x: 650, y: 545, small: "Sân", big: "BÓNG RỔ", at: 5.5, dx: -80, dy: -140 },
-  { x: 918, y: 330, small: "Sân tập", big: "MINI GOLF", at: 6.6, dx: 100, dy: 130 },
-  { x: 1420, y: 325, small: "Rạp chiếu phim", big: "NGOÀI TRỜI", at: 8.0, dx: -130, dy: 140 },
+// Ảnh tiện ích từ brochure Central Park (Gamuda Land) – nhãn theo chú thích trong brochure.
+// Mốc theo khoảng lặng của voice s8f: bể bơi 4,0s · sân tennis/pickleball/bóng rổ 5,6s · mini golf 8,0s · rạp phim 8,8s · trẻ em 10,1s
+const PHOTOS: { src: string; at: number; kicker: string; label: string }[] = [
+  { src: "gcp/am_b28.jpg", at: 2.0, kicker: "Hơn 40 hạng mục", label: "TIỆN ÍCH NGOÀI TRỜI" },
+  { src: "gcp/am_b17.jpg", at: 4.0, kicker: "Tầng 6", label: "BỂ BƠI VÔ CỰC" },
+  { src: "gcp/am_b16.jpg", at: 5.6, kicker: "Tennis · Pickleball · Bóng rổ", label: "SÂN THỂ THAO" },
+  { src: "gcp/am_b18.jpg", at: 8.0, kicker: "Không gian", label: "CỘNG ĐỒNG NGOÀI TRỜI" },
+  { src: "gcp/am_b24.jpg", at: 8.8, kicker: "Tiện ích tháp", label: "PHÒNG CHIẾU PHIM" },
+  { src: "gcp/am_b15.jpg", at: 10.1, kicker: "Cho các bé", label: "KHU VUI CHƠI TRẺ EM" },
 ];
+
+const Photo: React.FC<{ src: string; len: number; kicker: string; label: string; i: number }> = ({ src, len, kicker, label, i }) => {
+  const fr = useCurrentFrame();
+  const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+  const p = interpolate(fr, [0, 7], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  const dir = i % 2 === 0 ? 1 : -1;
+  const kb = 1.08 + 0.1 * (fr / Math.max(1, len));
+  const lp = interpolate(fr, [4, 12], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  return (
+    <AbsoluteFill style={{ overflow: "hidden", background: "#000" }}>
+      <AbsoluteFill style={{ transform: `translateX(${dir * (1 - p) * 420}px)`, filter: `blur(${(1 - p) * 16}px)`, opacity: Math.min(1, p * 1.4) }}>
+        <Img src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover",
+          transform: `scale(${kb}) translateX(${dir * -20 * (fr / Math.max(1, len))}px)` }} />
+        <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.65) 100%)" }} />
+      </AbsoluteFill>
+      <div style={{ position: "absolute", left: 70, right: 70, top: 1130, opacity: lp, transform: `translateY(${(1 - lp) * 30}px)` }}>
+        <div style={{ fontFamily: "Great Vibes", fontSize: 58, color: "#fff", textShadow: "0 3px 10px #000", lineHeight: 1.2 }}>{kicker}</div>
+        <div style={{ fontFamily: "Montserrat", fontWeight: 800, fontSize: 66, color: "#F6DE6E", letterSpacing: "0.03em", lineHeight: 1.3,
+          textShadow: "0 4px 16px rgba(0,0,0,.7)" }}>{label}</div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 const S8: React.FC = () => {
   const len = sceneLen(4);
   const k: CamKey[] = [
     { f: 0, x: 1000, y: 618, zoom: 1.56 },
-    { f: f(1.6), x: 1020, y: 600, zoom: 1.65 },
-    { f: f(3.8), x: 820, y: 600, zoom: 1.65 },
-    { f: f(5.8), x: 680, y: 600, zoom: 1.65 },
-    { f: f(7.2), x: 960, y: 600, zoom: 1.65 },
-    { f: f(9.0), x: 1340, y: 600, zoom: 1.65 },
-    { f: len, x: 1300, y: 610, zoom: 1.6 },
+    { f: f(2.2), x: 1060, y: 600, zoom: 1.75 },
   ];
   return (
-    <MapCamera src={MP.src} mapW={MP.w} mapH={MP.h} keys={k}
-      overlay={<>
-        <KeywordStack kicker="HƠN 40 TIỆN ÍCH" keyword="CHUẨN RESORT" color={COLORS.yellow} dur={len} top={1080} />
-        <Sequence from={f(9.0)} layout="none">
-          <div style={{ position: "absolute", top: 1300, left: 0, right: 0, textAlign: "center" }}>
-            <BlurIn dur={600}><span style={{ fontFamily: "Great Vibes", fontSize: 70, color: "#fff", textShadow: "0 3px 12px #000" }}>
-              Vườn trẻ mầm non nội khu</span></BlurIn>
-          </div>
-        </Sequence>
-      </>}>
-      {AMEN.map((a, i) => (
-        <Sequence key={i} from={f(a.at)} durationInFrames={f(2.6)} layout="none">
-          <Callout x={a.x} y={a.y} small={a.small} big={a.big} dx={a.dx} dy={a.dy} color="#FFB347" />
-        </Sequence>
-      ))}
-    </MapCamera>
+    <>
+      <MapCamera src={MP.src} mapW={MP.w} mapH={MP.h} keys={k} />
+      {PHOTOS.map((ph, i) => {
+        const from = f(ph.at);
+        const to = i < PHOTOS.length - 1 ? f(PHOTOS[i + 1].at) + 4 : len;
+        return (
+          <Sequence key={i} from={from} durationInFrames={to - from}>
+            <Photo src={ph.src} len={to - from} kicker={ph.kicker} label={ph.label} i={i} />
+          </Sequence>
+        );
+      })}
+      <Sequence durationInFrames={f(2.4)} layout="none">
+        <KeywordStack kicker="HƠN 40 TIỆN ÍCH" keyword="CHUẨN RESORT" color={COLORS.yellow} dur={f(2.4)} top={1080} />
+      </Sequence>
+    </>
   );
 };
 
@@ -290,29 +309,24 @@ const S7: React.FC = () => {
 const SCENES = [S1, S2, S3, S4, S8, S5, S6, S7];
 
 // ---------- Lớp thương hiệu ----------
-const Logo: React.FC = () => (
-  // Logo Kiên Bán Nhà (420×124) – vá dòng số điện thoại thành 0969 950 111
-  <div style={{ position: "absolute", top: 70, right: 24, width: 420, height: 124 }}>
-    <Img src={staticFile("gcp/logo.png")} style={{ position: "absolute", inset: 0, width: 420 }} />
-    <div style={{ position: "absolute", left: 76, top: 78, width: 228, height: 30, borderRadius: 6, filter: "blur(2px)",
-      background: "linear-gradient(90deg, rgb(36,44,62), rgb(40,48,66) 60%, rgb(44,52,70))" }} />
-    <div style={{ position: "absolute", left: 78, top: 72, width: 224, height: 40, display: "flex", alignItems: "center",
-      fontFamily: "Montserrat", fontWeight: 800, fontSize: 30, letterSpacing: "0.01em", color: "rgb(244,196,82)",
-      whiteSpace: "nowrap", lineHeight: 1 }}>
+// Số điện thoại mờ chạy ngang giữa màn hình, trái → phải (lặp liên tục).
+const Marquee: React.FC = () => {
+  const fr = useCurrentFrame();
+  const span = 1080 + 520; // quãng chạy: từ ngoài mép trái tới ngoài mép phải
+  const x = ((fr * 6) % span) - 520;
+  return (
+    <div style={{ position: "absolute", top: 935, left: x, whiteSpace: "nowrap", fontFamily: "Montserrat", fontWeight: 700,
+      fontSize: 52, color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em", pointerEvents: "none",
+      textShadow: "0 1px 2px rgba(0,0,0,0.15)" }}>
       0969 950 111
     </div>
-  </div>
-);
-const Watermark: React.FC = () => (
-  <div style={{ position: "absolute", top: 930, left: 0, right: 0, textAlign: "center", fontFamily: "Montserrat", fontWeight: 700,
-    fontSize: 46, color: "rgba(255,255,255,0.16)", letterSpacing: "0.03em", pointerEvents: "none" }}>
-    Kiên Bán Nhà · 0969 950 111
-  </div>
-);
+  );
+};
 const Credit: React.FC = () => (
-  <div style={{ position: "absolute", left: 0, right: 0, top: 1400, textAlign: "center", fontFamily: "Be Vietnam Pro",
-    fontSize: 17, color: "rgba(255,255,255,.7)", textShadow: "0 1px 3px #000" }}>
-    Ảnh vệ tinh: Esri, Maxar, Earthstar Geographics · Mặt bằng, phối cảnh: Gamuda Land · Nguồn tin: Gamuda Land, Tuổi Trẻ
+  <div style={{ position: "absolute", right: 22, bottom: 18, maxWidth: 760, textAlign: "right", fontFamily: "Be Vietnam Pro",
+    fontSize: 18, lineHeight: 1.35, color: "#ffffff", textShadow: "0 1px 3px rgba(0,0,0,.85)" }}>
+    Ảnh vệ tinh: Esri, Maxar, Earthstar Geographics<br />
+    Mặt bằng, phối cảnh, tiện ích (minh hoạ): Gamuda Land · Nguồn tin: Gamuda Land, Tuổi Trẻ
   </div>
 );
 
@@ -324,7 +338,7 @@ const SFX: { at: number; src: string; vol: number }[] = [
   { at: starts[1] + 4.9, src: "gcp/pop.wav", vol: 0.6 },
   { at: starts[2] + 0.2, src: "gcp/boom.wav", vol: 0.6 },
   { at: starts[3] + 4.6, src: "gcp/whoosh.wav", vol: 0.55 },
-  ...AMEN.map((a) => ({ at: starts[4] + a.at, src: "gcp/pop.wav", vol: 0.5 })),
+  ...PHOTOS.map((ph) => ({ at: starts[4] + ph.at - 0.1, src: "gcp/whoosh.wav", vol: 0.4 })),
   { at: starts[5] + 0.2, src: "gcp/boom.wav", vol: 0.7 },
   { at: starts[5] + 1.4, src: "gcp/boom.wav", vol: 0.7 },
   { at: starts[6] + 3.4, src: "gcp/whoosh.wav", vol: 0.55 },
@@ -343,8 +357,7 @@ export const GamudaCP: React.FC = () => {
           <S />
         </Sequence>
       ))}
-      <Watermark />
-      <Logo />
+      <Marquee />
       <Credit />
       {ORDER.map((n, i) => (
         <Sequence key={`vo${i}`} from={f(starts[i])}>
