@@ -7,9 +7,10 @@ description: "baymapAI — dựng video \"map flying\" BĐS cho Kiên: bản đ�
 
 Xưng **"em – anh"**. Tài liệu chi tiết:
 - `references/mau-map-flying.md` — dòng thời gian video mẫu King Park từng giây, 16 kỹ thuật **MF1–MF16** kèm thông số, màu, chữ, âm thanh, cách lấy nguồn bản đồ. **Đọc trước khi dựng.**
+- `references/mau-palm-river.md` — **mẫu học từ video Palm River**: khoanh lô đất phát sáng, logo dự án đứng trên khu đất, thẻ bài báo đánh dấu vàng (cách chụp bài thật), chữ 3D trên mặt đất, vòng khoanh nét đứt, dip đen, bản đồ tối, so sánh "lên bàn cân" (mã PR1–PR17).
 - `references/quy-tac-kien.md` — quy tắc edit cố định của Kiên (bắt buộc).
 - `templates/` — Remotion:
-  - `MapFx.tsx`: `MapCamera` (bay/zoom/nghiêng/xoay theo keyframe), `DrawPath` (ranh tự vẽ, sông neon, chữ dọc path), `ClipReveal` (mặt bằng hiện trong ranh), `MapPin`, `Callout` (đường dóng thẳng/gấp khúc), `Arc` (vòng cung nối), `Magnifier` (kính lúp + zoom xuyên), `DimCenterText`, `Text3D`.
+  - `MapFx.tsx`: `MapCamera` (bay/zoom/nghiêng/xoay theo keyframe), `DrawPath` (ranh tự vẽ, sông neon, chữ dọc path), `ClipReveal` (mặt bằng hiện trong ranh), `MapPin`, `Callout` (đường dóng thẳng/gấp khúc), `Arc` (vòng cung nối), `Magnifier` (kính lúp + zoom xuyên), `DimCenterText`, `Text3D`, `Tower3D`/`TowerY` (tháp 3D, chữ Y), `ParcelGlow` (lô đất phát sáng), `Billboard` (logo đứng trên khu đất), `Ring` (vòng khoanh, nét đứt), `GroundText` (chữ trên mặt đất), `NewsCard` (thẻ bài báo), `DipBlack`.
   - `MapDemo.example.tsx`: composition mẫu 12s dùng đủ các hiệu ứng trên.
   - `TextFx.tsx`, `BrollFx.tsx`, `fonts.ts`: chữ (gõ, số lăn, blur-in), thẻ ảnh nổi, font có tiếng Việt.
 
@@ -56,6 +57,11 @@ Nhịp: **3–6s một hành động bản đồ**, không để khung đứng y
 - Vùng an toàn TikTok: không đặt nhãn ở trên 0–230, dưới 1440–1920, cột phải x940–1080 y900–1440.
 - BrandBug top 238 scale 0.75; LikeSub giây 10; video trên 1 phút.
 - Số liệu (diện tích, số căn, giá, mốc thời gian) phải khớp tài liệu chủ đầu tư; số dễ lỗi thời → báo Kiên.
+
+## 4b. Chuẩn "phân tích có bằng chứng" (học từ Palm River)
+- Lô đất dự án luôn **khoanh viền trắng + nền vàng cam phát sáng**; logo dự án đứng phía trên khu đất ở cảnh mở đầu.
+- Mỗi con số quan trọng có **thẻ bài báo thật** (đánh dấu vàng câu trích, ghi nguồn) trượt lên nửa dưới khung.
+- Chuyển chương bằng dip đen 6 frame; hook giữa khung 2 dòng trắng/cam.
 
 ## 5. Checklist trước khi giao
 - [ ] Mỗi 3–6s có một hành động bản đồ; không khung chết > 2s.

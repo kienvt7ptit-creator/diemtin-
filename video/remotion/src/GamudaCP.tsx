@@ -1,9 +1,10 @@
-// Video map flying "The Gamuda Central Park" – dựng theo skill baymapAI (bản 2: nhịp nhanh + tháp 3D).
+// Video map flying "The Gamuda Central Park" – dựng theo skill baymapAI (bản 6: + kỹ thuật học từ video Palm River:
+// khoanh lô đất phát sáng, logo dự án đứng trên khu đất, trích bài báo đánh dấu vàng, chữ trên mặt đất, vòng khoanh, dip đen).
 // Ảnh vệ tinh: Esri World Imagery (z14 toàn thành phố, z17 khu dự án). Voice: ElevenLabs Adam (tăng tốc 1,12x).
 // Mặt bằng & phối cảnh: tài liệu Kiên cung cấp (Gamuda Land). Toạ độ dự án (Google Maps): 20.9596805, 105.8584847.
 import React from "react";
 import { AbsoluteFill, Audio, Easing, Img, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { MapCamera, DrawPath, MapPin, Callout, Arc, CamKey, TowerY } from "./kien/MapFx";
+import { MapCamera, DrawPath, MapPin, Callout, Arc, CamKey, TowerY, ParcelGlow, Billboard, Ring, GroundText, NewsCard, DipBlack } from "./kien/MapFx";
 import { KeywordStack, NumberRoll, TypeOn, BlurIn, COLORS } from "./kien/TextFx";
 
 const FPS = 30;
@@ -37,21 +38,60 @@ const P17: [number, number] = [1766, 2736];
 const VD3 = "M0,2130 L750,2115 L1200,2160 L1650,2235 L2100,2295 L2550,2280 L3072,2250";
 const PVCG = "M840,1300 L870,1800 L900,2250 L990,2880 L1200,3300 L1560,3990";
 const SKY = "linear-gradient(180deg, #8fb8d8 0%, #cfe0e8 22%, #e9e4d6 30%, #3a4a3a 31%)";
-const SITE: [number, number] = [1900, 2715]; // tâm khu đất (khoảng trống phía Đông ghim Google Maps)
+const SITE: [number, number] = [1925, 2758]; // tâm lô đất (khoảng trống phía Đông ghim Google Maps, giữa đường Gamuda Yên Sở và bờ kênh)
+// Ranh lô đất đo trên ảnh vệ tinh z17 (~1,1 m/px → ~32.000 m², tài liệu ghi ~35.000 m²)
+const PARCEL = "M1800,2712 L1960,2702 L2048,2702 L2050,2795 L1800,2822 Z";
 
-// 3 toà tháp mô phỏng hình chữ Y (lõi + 3 cánh, theo mặt bằng tổng thể; ~1,1 m/px; chiều cao minh hoạ)
+// 3 toà tháp mô phỏng hình chữ Y cùng hướng (lõi + 3 cánh, theo mặt bằng tổng thể; chiều cao minh hoạ)
 const TowerSet: React.FC<{ start?: number; dur?: number }> = ({ start = 0, dur = 24 }) => (
   <>
-    {[
-      { dx: -120, dy: 0, angle: -90 },
-      { dx: 0, dy: 0, angle: -90 },
-      { dx: 120, dy: 0, angle: -90 },
-    ].map((t, i) => (
-      <TowerY key={i} x={SITE[0] + t.dx} y={SITE[1] + t.dy} h={118} wing={40} wingW={16} core={20} angle={t.angle}
+    {[-82, 0, 82].map((dx, i) => (
+      <TowerY key={i} x={SITE[0] + dx} y={SITE[1]} h={118} wing={32} wingW={13} core={16} angle={-90}
         start={start + i * 5} dur={dur} />
     ))}
   </>
 );
+
+/** Logo Central Park: biểu tượng (vector hoá từ brochure) + wordmark serif. */
+const ProjectLogo: React.FC<{ scale?: number }> = ({ scale = 1 }) => (
+  <div style={{ textAlign: "center", transform: `scale(${scale})`, transformOrigin: "50% 100%",
+    filter: "drop-shadow(0 0 10px rgba(255,255,255,.55)) drop-shadow(0 6px 20px rgba(0,0,0,.6))" }}>
+    <Img src={staticFile("gcp/cp_emblem.svg")} style={{ width: 420, height: 420 * 335 / 1037, objectFit: "contain" }} />
+    <div style={{ fontFamily: "Cormorant Garamond", fontWeight: 600, fontSize: 74, letterSpacing: "0.16em", color: "#fff",
+      lineHeight: 1.1, whiteSpace: "nowrap", marginTop: 4 }}>CENTRAL PARK</div>
+    <div style={{ fontFamily: "Be Vietnam Pro", fontWeight: 500, fontSize: 20, letterSpacing: "0.42em", color: "#F3E3B5",
+      whiteSpace: "nowrap", marginTop: 2 }}>A GAMUDA LAND COMMUNITY</div>
+  </div>
+);
+
+/** Lô đất phát sáng + 3 tháp + (tuỳ chọn) logo đứng trên khu đất. */
+const Site: React.FC<{ glowAt?: number; towersAt?: number; logoAt?: number; logoLift?: number; logoScale?: number }> = ({
+  glowAt = 0, towersAt = 0, logoAt, logoLift = 260, logoScale = 1,
+}) => (
+  <>
+    <ParcelGlow id="cp" d={PARCEL} mapW={3072} mapH={5120} start={glowAt} dur={glowAt === 0 ? 1 : 22} />
+    <TowerSet start={towersAt} dur={towersAt === 0 ? 1 : 24} />
+    {logoAt !== undefined && (
+      <Billboard x={SITE[0]} y={SITE[1] - 20} lift={logoLift} start={logoAt}><ProjectLogo scale={logoScale} /></Billboard>
+    )}
+  </>
+);
+
+/** PR2: hook 2 dòng giữa khung (trắng + cam), nền tối nhẹ. */
+const CenterHook: React.FC<{ a: string; b: string; dur: number; top?: number }> = ({ a, b, dur, top = 700 }) => {
+  const fr = useCurrentFrame();
+  const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+  const p = interpolate(fr, [0, 8, dur - 6, dur], [0, 1, 1, 0], cl);
+  const bl = interpolate(fr, [0, 8], [14, 0], cl);
+  return (
+    <AbsoluteFill style={{ background: `rgba(0,0,0,${0.35 * p})` }}>
+      <div style={{ position: "absolute", top, left: 40, right: 40, textAlign: "center", opacity: p, filter: `blur(${bl}px)` }}>
+        <div style={{ fontFamily: "Montserrat", fontWeight: 800, fontSize: 84, color: "#fff", lineHeight: 1.2, textShadow: "0 6px 20px rgba(0,0,0,.6)" }}>{a}</div>
+        <div style={{ fontFamily: "Montserrat", fontWeight: 800, fontSize: 92, color: "#FF9F1C", lineHeight: 1.2, textShadow: "0 6px 20px rgba(0,0,0,.6)" }}>{b}</div>
+      </div>
+    </AbsoluteFill>
+  );
+};
 
 const Badge: React.FC<{ title: string; sub?: string; bg?: string }> = ({ title, sub, bg = "linear-gradient(#0f5d4f,#06352c)" }) => (
   <div style={{ background: bg, border: "3px solid #E9C46A", borderRadius: 16, padding: "12px 22px", textAlign: "center",
@@ -94,7 +134,7 @@ const S1: React.FC = () => {
   const k14: CamKey[] = [{ f: 0, x: P14[0], y: P14[1] - 400, zoom: 0.55 }, { f: cut, x: P14[0], y: P14[1], zoom: 4.5 }];
   const k17: CamKey[] = [
     { f: 0, x: SITE[0], y: SITE[1], zoom: 1.1, tilt: 10 },
-    { f: len - cut, x: SITE[0], y: SITE[1] + 30, zoom: 2.4, tilt: 52, rotate: -14 },
+    { f: len - cut, x: SITE[0], y: SITE[1] - 60, zoom: 2.2, tilt: 50, rotate: -12 },
   ];
   return (
     <>
@@ -103,10 +143,12 @@ const S1: React.FC = () => {
       </Sequence>
       <Sequence from={cut}>
         <MapCamera background={SKY} src={Z17.src} mapW={Z17.w} mapH={Z17.h} keys={k17}>
-          <TowerSet start={4} dur={26} />
+          <Site glowAt={2} towersAt={14} logoAt={30} logoLift={170} logoScale={0.5} />
         </MapCamera>
       </Sequence>
-      <KeywordStack kicker="GAMUDA LAND" keyword="CENTRAL PARK" color={COLORS.teal} script="Yên Sở" dur={len} top={360} />
+      <Sequence durationInFrames={cut} layout="none">
+        <CenterHook a="GIỮA PHÍA NAM" b="HÀ NỘI" dur={cut} />
+      </Sequence>
     </>
   );
 };
@@ -121,7 +163,10 @@ const S2: React.FC = () => {
   ];
   return (
     <MapCamera src={Z14.src} mapW={Z14.w} mapH={Z14.h} keys={k}
-      overlay={<FlyCard src="gcp/locmap.jpg" top={1030} start={f(7.2)} w={620} ratio={1630 / 965} from="left" />}>
+      overlay={<>
+        <FlyCard src="gcp/locmap.jpg" top={1030} start={f(7.2)} w={620} ratio={1630 / 965} from="left" />
+        <Ring x={519} y={1186} r={62} dashed color="#FF2D55" start={f(7.8)} />
+      </>}>
       <MapPin x={P14[0]} y={P14[1]} stem={70}><Badge title="CENTRAL PARK" /></MapPin>
       <Callout x={P14[0] + 40} y={P14[1] + 20} start={f(1.0)} small="Đại đô thị Gamuda City" big=">270 HA" dx={110} dy={-130} color="#7FE7C4" />
       <MapPin x={HG14[0]} y={HG14[1]} start={f(3.6)} stem={60}><Badge title="HỒ HOÀN KIẾM" bg="linear-gradient(#8a1c2b,#4a0d16)" /></MapPin>
@@ -140,7 +185,8 @@ const S3: React.FC = () => {
   ];
   return (
     <MapCamera background={SKY} src={Z17.src} mapW={Z17.w} mapH={Z17.h} keys={k}>
-      <TowerSet start={0} dur={1} />
+      <Site />
+      <Ring x={SITE[0]} y={SITE[1] - 10} r={70} start={f(0.4)} />
       <DrawPath id="vd3" d={VD3} mapW={Z17.w} mapH={Z17.h} start={f(0.2)} dur={f(1.0)} color="#FF9F1C" width={9} fill="none"
         label="VÀNH ĐAI 3" labelColor="#FFE0A8" labelSize={40} />
       <DrawPath id="pvcg" d={PVCG} mapW={Z17.w} mapH={Z17.h} start={f(2.2)} dur={f(1.0)} color="#4CC9F0" width={9} fill="none"
@@ -162,7 +208,10 @@ const S4: React.FC = () => {
   return (
     <MapCamera background={SKY} src={Z17.src} mapW={Z17.w} mapH={Z17.h} keys={k}
       overlay={<FlyCard src="gcp/render.jpg" top={1000} start={f(4.6)} label="Phối cảnh dự án (minh hoạ)" />}>
-      <TowerSet start={0} dur={1} />
+      <Site />
+      <Sequence durationInFrames={f(4.4)} layout="none">
+        <GroundText x={1560} y={2905} start={6} lines={[{ t: "TỌA ĐỘ", color: "#FFFFFF", size: 84 }, { t: "XANH HIẾM CÓ", color: "#FFB02E", size: 90 }]} />
+      </Sequence>
       <Callout x={1350} y={2500} start={f(1.6)} small="Ngay cạnh" big="CÔNG VIÊN YÊN SỞ" dx={40} dy={-200} color="#7FE7C4" />
       <Callout x={1150} y={2850} start={f(3.2)} small="Chuỗi" big="HỒ ĐIỀU HÒA" dx={-40} dy={150} elbow={false} color="#4CC9F0" />
     </MapCamera>
@@ -240,25 +289,18 @@ const Stat: React.FC<{ start: number; value: string; label: string; top: number;
 const S5: React.FC = () => {
   const len = sceneLen(5);
   const k: CamKey[] = [
-    { f: 0, x: SITE[0], y: SITE[1] + 60, zoom: 1.6, tilt: 55, rotate: 40 },
-    { f: len, x: SITE[0], y: SITE[1] + 60, zoom: 2.2, tilt: 58, rotate: -30 },
+    { f: 0, x: SITE[0], y: SITE[1] + 120, zoom: 1.7, tilt: 55, rotate: 30 },
+    { f: len, x: SITE[0], y: SITE[1] + 120, zoom: 2.1, tilt: 58, rotate: -25 },
   ];
   return (
     <MapCamera background={SKY} src={Z17.src} mapW={Z17.w} mapH={Z17.h} keys={k}
       overlay={<>
-        <Dim to={0.3} />
-        <Stat start={f(0.2)} value="3" label="TÒA CHUNG CƯ" top={300} color={COLORS.teal} />
-        <Stat start={f(1.4)} value="2.600+" label="CĂN HỘ" top={1080} color={COLORS.yellow} />
-        <Sequence from={f(3.6)} layout="none">
-          <div style={{ position: "absolute", top: 1330, left: 0, right: 0, textAlign: "center" }}>
-            <BlurIn dur={600}><span style={{ fontFamily: "Great Vibes", fontSize: 80, color: "#fff", textShadow: "0 3px 12px #000" }}>Phân khúc cao cấp</span></BlurIn>
-          </div>
-        </Sequence>
-        <div style={{ position: "absolute", top: 1290, right: 60, fontFamily: "Be Vietnam Pro", fontSize: 18, color: "rgba(255,255,255,.7)" }}>
-          Khối 3D mô phỏng minh hoạ
-        </div>
+        <Dim to={0.22} />
+        <Stat start={f(0.2)} value="2.600+" label="CĂN HỘ · 3 TÒA CHUNG CƯ" top={250} color={COLORS.yellow} />
+        <NewsCard src="gcp/news_tt2a.jpg" ratio={960 / 972} start={f(2.8)} dur={len - f(2.8)} top={1010} width={900}
+          source="Nguồn: Báo Tuổi Trẻ (tuoitre.vn)" />
       </>}>
-      <TowerSet start={0} dur={1} />
+      <Site />
     </MapCamera>
   );
 };
@@ -275,7 +317,8 @@ const S6: React.FC = () => {
         <Dim to={0.4} />
         <KeywordStack kicker="CHỦ ĐẦU TƯ" keyword="GAMUDA LAND" color={COLORS.teal} script="Malaysia" dur={len} top={340}
           sub="Thuộc tập đoàn Gamuda Berhad" />
-        <FlyCard src="gcp/masterplan.jpg" top={980} start={f(3.4)} w={760} ratio={2000 / 760} label="Mặt bằng tổng thể Central Park" />
+        <NewsCard src="gcp/news_tt1.jpg" ratio={1000 / 403} start={f(2.6)} dur={sceneLen(6) - f(2.6)} top={1060} width={960}
+          source="Nguồn: Báo Tuổi Trẻ (tuoitre.vn)" />
       </>}>
       <MapPin x={P14[0]} y={P14[1]} stem={70}><Badge title="GAMUDA CITY" sub=">270 ha · Nam Hà Nội" /></MapPin>
     </MapCamera>
@@ -285,23 +328,25 @@ const S6: React.FC = () => {
 const S7: React.FC = () => {
   const len = sceneLen(7);
   const k: CamKey[] = [
-    { f: 0, x: SITE[0], y: SITE[1], zoom: 1.2, tilt: 40, rotate: -20 },
-    { f: len, x: SITE[0], y: SITE[1] + 40, zoom: 2.0, tilt: 55, rotate: 25 },
+    { f: 0, x: SITE[0], y: SITE[1] - 40, zoom: 1.3, tilt: 42, rotate: -18 },
+    { f: len, x: SITE[0], y: SITE[1] - 20, zoom: 2.0, tilt: 55, rotate: 22 },
   ];
   return (
     <MapCamera background={SKY} src={Z17.src} mapW={Z17.w} mapH={Z17.h} keys={k}
       overlay={<>
+        <NewsCard src="gcp/news_tt2b.jpg" ratio={960 / 728} start={f(0.5)} dur={f(3.1)} top={1040} width={900}
+          source="Nguồn: Báo Tuổi Trẻ (tuoitre.vn)" />
         <Dim to={0.45} at={f(3.6)} />
         <KeywordStack kicker="DỰ KIẾN RA MẮT" keyword="CUỐI 2026" color={COLORS.yellow} dur={len} top={330} />
         <Sequence from={f(3.8)} layout="none">
-          <div style={{ position: "absolute", top: 860, left: 60, right: 60, textAlign: "center" }}>
+          <div style={{ position: "absolute", top: 1130, left: 60, right: 60, textAlign: "center" }}>
             <TypeOn text="Nhận thông tin chi tiết – gọi ngay" dur={600} style={{ fontSize: 40 }} />
             <div><BlurIn start={10} dur={600}><span style={{ fontFamily: "Montserrat", fontWeight: 800, fontSize: 104, color: "#F6DE6E",
               textShadow: "0 6px 22px rgba(0,0,0,.6)", lineHeight: 1.3 }}>0969 950 111</span></BlurIn></div>
           </div>
         </Sequence>
       </>}>
-      <TowerSet start={0} dur={1} />
+      <Site />
     </MapCamera>
   );
 };
@@ -326,7 +371,7 @@ const Credit: React.FC = () => (
   <div style={{ position: "absolute", right: 22, bottom: 18, maxWidth: 760, textAlign: "right", fontFamily: "Be Vietnam Pro",
     fontSize: 18, lineHeight: 1.35, color: "#ffffff", textShadow: "0 1px 3px rgba(0,0,0,.85)" }}>
     Ảnh vệ tinh: Esri, Maxar, Earthstar Geographics<br />
-    Mặt bằng, phối cảnh, tiện ích (minh hoạ): Gamuda Land · Nguồn tin: Gamuda Land, Tuổi Trẻ
+    Mặt bằng, phối cảnh, tiện ích (minh hoạ): Gamuda Land · Nguồn tin: Gamuda Land, Báo Tuổi Trẻ
   </div>
 );
 
@@ -355,6 +400,11 @@ export const GamudaCP: React.FC = () => {
       {SCENES.map((S, i) => (
         <Sequence key={i} from={sceneFrom(i)} durationInFrames={sceneLen(i)}>
           <S />
+        </Sequence>
+      ))}
+      {[1, 4, 5].map((i) => (
+        <Sequence key={`dip${i}`} from={sceneFrom(i) - 3} durationInFrames={6}>
+          <DipBlack len={6} />
         </Sequence>
       ))}
       <Marquee />

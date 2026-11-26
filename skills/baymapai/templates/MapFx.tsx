@@ -340,3 +340,123 @@ export const TowerY: React.FC<{
     })}
   </>
 );
+
+// ---------- Học từ video Palm River (mã PR trong references/mau-palm-river.md) ----------
+
+/** PR4/PR8: khoanh lô đất phát sáng – viền trắng tự vẽ rồi nền vàng cam sáng dần (đặt trong MapCamera, toạ độ bản đồ). */
+export const ParcelGlow: React.FC<{
+  d: string; mapW: number; mapH: number; id: string; start?: number; dur?: number;
+  fill?: string; stroke?: string; fillOpacity?: number;
+}> = ({ d, mapW, mapH, id, start = 0, dur = 24, fill = "#FFB02E", stroke = "#FFFFFF", fillOpacity = 0.55 }) => {
+  const f = useCurrentFrame() - start;
+  const cam = useCam();
+  if (f < 0) return null;
+  const pl = interpolate(f, [0, dur * 0.6], [0, 1], { ...clamp, easing: easeIO });
+  const pf = interpolate(f, [dur * 0.45, dur], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  const gid = `pg-${id}`;
+  return (
+    <svg width={mapW} height={mapH} viewBox={`0 0 ${mapW} ${mapH}`} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={fill} stopOpacity={fillOpacity} />
+          <stop offset="1" stopColor="#FF7A00" stopOpacity={fillOpacity * 0.85} />
+        </linearGradient>
+      </defs>
+      <path d={d} fill={`url(#${gid})`} opacity={pf}
+        style={{ filter: `drop-shadow(0 0 ${12 / cam.zoom}px ${fill})` }} />
+      <path d={d} fill="none" stroke={stroke} strokeWidth={3.2 / cam.zoom} strokeLinejoin="round" pathLength={1}
+        strokeDasharray={1} strokeDashoffset={1 - pl} style={{ filter: `drop-shadow(0 0 ${6 / cam.zoom}px #fff)` }} />
+    </svg>
+  );
+};
+
+/** PR4: vật thể "đứng" trên bản đồ, luôn quay mặt về camera (khử zoom, xoay, nghiêng). Đặt trong MapCamera. */
+export const Billboard: React.FC<{ x: number; y: number; lift?: number; start?: number; dur?: number; children: React.ReactNode }> = ({
+  x, y, lift = 0, start = 0, dur = 14, children,
+}) => {
+  const f = useCurrentFrame() - start;
+  const cam = useCam();
+  if (f < 0) return null;
+  const p = interpolate(f, [0, dur], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  return (
+    <div style={{ position: "absolute", left: x, top: y, width: 0, height: 0, transformStyle: "preserve-3d",
+      transform: `scale(${1 / cam.zoom}) rotate(${-cam.rotate}deg) rotateX(${-cam.tilt}deg)` }}>
+      <div style={{ position: "absolute", left: 0, bottom: lift, transform: `translateX(-50%) translateY(${(1 - p) * 40}px)`,
+        opacity: p, filter: `blur(${(1 - p) * 10}px)` }}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+/** PR17: vòng khoanh mảnh quanh dự án, tự vẽ (cam), có thể nét đứt đỏ (PR16). Toạ độ bản đồ, bán kính px màn hình. */
+export const Ring: React.FC<{ x: number; y: number; r: number; start?: number; dur?: number; color?: string; dashed?: boolean }> = ({
+  x, y, r, start = 0, dur = 18, color = "#FF9F1C", dashed = false,
+}) => {
+  const f = useCurrentFrame() - start;
+  const cam = useCam();
+  if (f < 0) return null;
+  const p = interpolate(f, [0, dur], [0, 1], { ...clamp, easing: easeIO });
+  const R = r / cam.zoom;
+  const C = 2 * Math.PI * R;
+  return (
+    <svg style={{ position: "absolute", left: x - R - 10, top: y - R - 10, overflow: "visible" }} width={2 * R + 20} height={2 * R + 20}>
+      <circle cx={R + 10} cy={R + 10} r={R} fill="none" stroke={color} strokeWidth={(dashed ? 7 : 4) / cam.zoom}
+        strokeDasharray={dashed ? `${14 / cam.zoom} ${10 / cam.zoom}` : `${C}`} strokeDashoffset={dashed ? 0 : C * (1 - p)}
+        opacity={dashed ? p : 1} transform={`rotate(-90 ${R + 10} ${R + 10})`}
+        style={{ filter: `drop-shadow(0 0 ${8 / cam.zoom}px ${color})` }} />
+    </svg>
+  );
+};
+
+/** PR10: chữ to nằm trên mặt đất (nghiêng theo camera), trượt vào. Toạ độ bản đồ, cỡ chữ px màn hình. */
+export const GroundText: React.FC<{ x: number; y: number; lines: { t: string; color?: string; size?: number }[]; start?: number;
+  angle?: number }> = ({ x, y, lines, start = 0, angle = -12 }) => {
+  const f = useCurrentFrame() - start;
+  const cam = useCam();
+  if (f < 0) return null;
+  const p = interpolate(f, [0, 16], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  return (
+    <div style={{ position: "absolute", left: x, top: y, width: 0, height: 0,
+      transform: `scale(${1 / cam.zoom}) rotate(${angle}deg)` }}>
+      <div style={{ position: "absolute", left: 0, top: 0, transform: `translate(-50%, -50%) translateX(${(1 - p) * -260}px)`,
+        opacity: p, whiteSpace: "nowrap", textAlign: "left" }}>
+        {lines.map((l, i) => (
+          <div key={i} style={{ fontFamily: "Montserrat", fontWeight: 800, fontSize: l.size ?? 110, lineHeight: 1.15,
+            color: l.color ?? "#FFB02E", textShadow: "0 6px 18px rgba(0,0,0,.55)", letterSpacing: "0.01em" }}>{l.t}</div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/** PR3/PR12: thẻ ảnh chụp bài báo (đã đánh dấu vàng câu then chốt) trượt lên từ đáy, nền phía trên mờ tối. Toạ độ màn hình. */
+export const NewsCard: React.FC<{ src: string; ratio: number; start: number; dur: number; top?: number; width?: number;
+  source?: string; scrollTo?: number }> = ({ src, ratio, start, dur, top = 980, width = 940, source, scrollTo = 0 }) => {
+  const f = useCurrentFrame() - start;
+  if (f < 0 || f > dur) return null;
+  const pin = interpolate(f, [0, 10], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  const pout = interpolate(f, [dur - 8, dur], [0, 1], { ...clamp, easing: Easing.in(Easing.cubic) });
+  const y = (1 - pin) * 900 + pout * 900;
+  const scroll = interpolate(f, [12, dur - 10], [0, scrollTo], clamp);
+  const h = width / ratio;
+  return (
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
+      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,.55) 60%)", opacity: pin * (1 - pout) }} />
+      <div style={{ position: "absolute", left: (1080 - width) / 2, top, width, transform: `translateY(${y}px) rotate(${(1 - pin) * -3}deg)` }}>
+        <div style={{ height: Math.min(h, 1920 - top - 120), overflow: "hidden", borderRadius: 10, background: "#fff",
+          boxShadow: "0 24px 60px rgba(0,0,0,.6)" }}>
+          <Img src={staticFile(src)} style={{ width, height: h, transform: `translateY(${-scroll}px)` }} />
+        </div>
+        {source && <div style={{ marginTop: 10, fontFamily: "Be Vietnam Pro", fontSize: 24, color: "#fff", textShadow: "0 2px 6px #000" }}>{source}</div>}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+/** PR13: chuyển chương bằng khung đen ngắn (dip to black 4–6 frame). Đặt Sequence bắt đầu ngay trước điểm cắt. */
+export const DipBlack: React.FC<{ len?: number }> = ({ len = 6 }) => {
+  const f = useCurrentFrame();
+  const o = interpolate(f, [0, len / 2, len], [0, 1, 0], clamp);
+  return <AbsoluteFill style={{ background: "#000", opacity: o }} />;
+};

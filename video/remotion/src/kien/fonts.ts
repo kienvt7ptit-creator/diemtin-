@@ -5,6 +5,7 @@ import { loadFont as montserrat } from "@remotion/google-fonts/Montserrat";
 import { loadFont as greatVibes } from "@remotion/google-fonts/GreatVibes";
 import { loadFont as beVietnam } from "@remotion/google-fonts/BeVietnamPro";
 import { loadFont as oswald } from "@remotion/google-fonts/Oswald";
+import { loadFont as cormorant } from "@remotion/google-fonts/CormorantGaramond";
 
 export const loadFxFonts = () => {
   anton("normal", { weights: ["400"], subsets: ["vietnamese", "latin"] });
@@ -12,4 +13,5 @@ export const loadFxFonts = () => {
   greatVibes("normal", { weights: ["400"], subsets: ["vietnamese", "latin"] });
   beVietnam("normal", { weights: ["400", "500", "800"], subsets: ["vietnamese", "latin"] });
   oswald("normal", { weights: ["500", "700"], subsets: ["vietnamese", "latin"] });
+  cormorant("normal", { weights: ["500", "600"], subsets: ["vietnamese", "latin"] }); // wordmark logo dự án
 };
