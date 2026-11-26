@@ -2,3 +2,6 @@ node_modules/
 out/
 
 public/gcp/
+public/m4/*_z13.jpg
+public/m4/*_z17.jpg
+public/m4/*.wav
