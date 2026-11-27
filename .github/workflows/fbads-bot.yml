@@ -1,0 +1,103 @@
+name: FB Ads Bot
+
+on:
+  schedule:
+    # 2 tiếng/lần từ khoảng 8h đến 22h giờ Việt Nam (giờ UTC = VN - 7)
+    - cron: "17 1-15/2 * * *"
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "Lệnh: run | report | pending | approve | reject"
+        default: run
+        required: true
+      mode:
+        description: "Ghi đè mode cho lệnh run: propose | approve | auto (để trống = theo config)"
+        default: ""
+        required: false
+      ids:
+        description: "ID cho approve/reject (cách nhau bởi dấu cách, hoặc 'all')"
+        default: ""
+        required: false
+      ai:
+        description: "Kèm phân tích AI (true/false)"
+        default: "false"
+        required: false
+
+concurrency:
+  group: fbads-bot
+  cancel-in-progress: false
+
+jobs:
+  bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: fbads-bot
+    env:
+      META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      META_AD_ACCOUNT_ID: ${{ secrets.META_AD_ACCOUNT_ID }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - name: Kiểm tra secrets
+        id: guard
+        working-directory: .
+        run: |
+          if [ -z "$META_ACCESS_TOKEN" ] || [ -z "$META_AD_ACCOUNT_ID" ]; then
+            echo "Chưa cấu hình META_ACCESS_TOKEN / META_AD_ACCOUNT_ID trong Secrets -> bỏ qua."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip != 'true'
+
+      - uses: actions/setup-python@v5
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: fbads-bot/requirements.txt
+
+      - name: Cài thư viện
+        if: steps.guard.outputs.skip != 'true'
+        run: pip install -r requirements.txt
+
+      # Lưu state (cooldown, lệnh chờ duyệt) giữa các lần chạy
+      - name: Khôi phục state
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: fbads-bot/state
+          key: fbads-state-${{ github.run_id }}
+          restore-keys: fbads-state-
+
+      - name: Chạy bot
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          CMD: ${{ github.event.inputs.command || 'run' }}
+          MODE: ${{ github.event.inputs.mode }}
+          IDS: ${{ github.event.inputs.ids }}
+          AI: ${{ github.event.inputs.ai || 'false' }}
+        run: |
+          case "$CMD" in
+            run)
+              ARGS="run"
+              [ -n "$MODE" ] && ARGS="$ARGS --mode $MODE"
+              [ "$AI" = "true" ] && ARGS="$ARGS --ai"
+              python -m fbads_bot $ARGS ;;
+            report)  python -m fbads_bot report ;;
+            pending) python -m fbads_bot pending ;;
+            approve|reject)
+              [ -z "$IDS" ] && { echo "Cần nhập ids"; exit 1; }
+              python -m fbads_bot "$CMD" $IDS ;;
+            *) echo "Lệnh không hợp lệ: $CMD"; exit 1 ;;
+          esac
+
+      - name: Lưu state
+        if: always() && steps.guard.outputs.skip != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: fbads-bot/state
+          key: fbads-state-${{ github.run_id }}

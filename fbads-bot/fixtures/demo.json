@@ -1,0 +1,635 @@
+{
+ "account": {
+  "id": "act_demo",
+  "name": "Tài khoản DEMO",
+  "currency": "VND",
+  "timezone_name": "Asia/Ho_Chi_Minh",
+  "account_status": 1
+ },
+ "objects": {
+  "adset": [
+   {
+    "id": "as1",
+    "name": "Tệp 25-45 Hà Nội",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "daily_budget": "500000",
+    "campaign": {
+     "id": "c1",
+     "name": "Dự án Sun Garden - Lead"
+    }
+   },
+   {
+    "id": "as2",
+    "name": "Lookalike 1% khách cũ",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "daily_budget": "800000",
+    "campaign": {
+     "id": "c1",
+     "name": "Dự án Sun Garden - Lead"
+    }
+   },
+   {
+    "id": "as3",
+    "name": "Sở thích đầu tư BĐS",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "daily_budget": "1000000",
+    "campaign": {
+     "id": "c1",
+     "name": "Dự án Sun Garden - Lead"
+    }
+   },
+   {
+    "id": "as4",
+    "name": "[GIỮ] Remarketing web 30 ngày",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "daily_budget": "300000",
+    "campaign": {
+     "id": "c3",
+     "name": "Retarget"
+    }
+   },
+   {
+    "id": "as5",
+    "name": "Broad toàn quốc",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "campaign": {
+     "id": "c2",
+     "name": "Dự án Sun Garden - CBO",
+     "daily_budget": "2000000"
+    }
+   },
+   {
+    "id": "as6",
+    "name": "Retarget xem video 50%",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "daily_budget": "400000",
+    "campaign": {
+     "id": "c3",
+     "name": "Retarget"
+    }
+   }
+  ],
+  "ad": [
+   {
+    "id": "ad1",
+    "name": "Video flycam dự án",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "adset_id": "as2",
+    "campaign": {
+     "id": "c1",
+     "name": "Dự án Sun Garden - Lead"
+    }
+   },
+   {
+    "id": "ad2",
+    "name": "Ảnh phối cảnh tĩnh",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "adset_id": "as3",
+    "campaign": {
+     "id": "c1",
+     "name": "Dự án Sun Garden - Lead"
+    }
+   },
+   {
+    "id": "ad3",
+    "name": "Carousel mặt bằng",
+    "effective_status": "ACTIVE",
+    "status": "ACTIVE",
+    "adset_id": "as1",
+    "campaign": {
+     "id": "c1",
+     "name": "Dự án Sun Garden - Lead"
+    }
+   }
+  ]
+ },
+ "insights": {
+  "adset": {
+   "today": [
+    {
+     "adset_id": "as1",
+     "adset_name": "Tệp 25-45 Hà Nội",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "350000",
+     "impressions": "9000",
+     "reach": "6923",
+     "frequency": "1.3",
+     "clicks": "98",
+     "inline_link_clicks": "70",
+     "inline_link_click_ctr": "0.7778",
+     "cpm": "38888.89",
+     "actions": []
+    },
+    {
+     "adset_id": "as2",
+     "adset_name": "Lookalike 1% khách cũ",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "400000",
+     "impressions": "11000",
+     "reach": "9166",
+     "frequency": "1.2",
+     "clicks": "251",
+     "inline_link_clicks": "180",
+     "inline_link_click_ctr": "1.6364",
+     "cpm": "36363.64",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "3"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "adset_id": "as3",
+     "adset_name": "Sở thích đầu tư BĐS",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "600000",
+     "impressions": "14000",
+     "reach": "10000",
+     "frequency": "1.4",
+     "clicks": "125",
+     "inline_link_clicks": "90",
+     "inline_link_click_ctr": "0.6429",
+     "cpm": "42857.14",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "adset_id": "as4",
+     "adset_name": "[GIỮ] Remarketing web 30 ngày",
+     "campaign_id": "c3",
+     "campaign_name": "Retarget",
+     "spend": "150000",
+     "impressions": "4000",
+     "reach": "1904",
+     "frequency": "2.1",
+     "clicks": "84",
+     "inline_link_clicks": "60",
+     "inline_link_click_ctr": "1.5000",
+     "cpm": "37500.00",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "2"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "1"
+      }
+     ]
+    },
+    {
+     "adset_id": "as5",
+     "adset_name": "Broad toàn quốc",
+     "campaign_id": "c2",
+     "campaign_name": "Dự án Sun Garden - CBO",
+     "spend": "900000",
+     "impressions": "30000",
+     "reach": "27272",
+     "frequency": "1.1",
+     "clicks": "560",
+     "inline_link_clicks": "400",
+     "inline_link_click_ctr": "1.3333",
+     "cpm": "30000.00",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "6"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "adset_id": "as6",
+     "adset_name": "Retarget xem video 50%",
+     "campaign_id": "c3",
+     "campaign_name": "Retarget",
+     "spend": "400000",
+     "impressions": "2500",
+     "reach": "833",
+     "frequency": "3.0",
+     "clicks": "28",
+     "inline_link_clicks": "20",
+     "inline_link_click_ctr": "0.8000",
+     "cpm": "160000.00",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "1"
+      }
+     ]
+    }
+   ],
+   "last_3d": [
+    {
+     "adset_id": "as1",
+     "adset_name": "Tệp 25-45 Hà Nội",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "1200000",
+     "impressions": "30000",
+     "reach": "16666",
+     "frequency": "1.8",
+     "clicks": "350",
+     "inline_link_clicks": "250",
+     "inline_link_click_ctr": "0.8333",
+     "cpm": "40000.00",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "3"
+      }
+     ]
+    },
+    {
+     "adset_id": "as2",
+     "adset_name": "Lookalike 1% khách cũ",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "2000000",
+     "impressions": "52000",
+     "reach": "28888",
+     "frequency": "1.8",
+     "clicks": "1260",
+     "inline_link_clicks": "900",
+     "inline_link_click_ctr": "1.7308",
+     "cpm": "38461.54",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "14"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "adset_id": "as3",
+     "adset_name": "Sở thích đầu tư BĐS",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "3000000",
+     "impressions": "60000",
+     "reach": "30000",
+     "frequency": "2.0",
+     "clicks": "700",
+     "inline_link_clicks": "500",
+     "inline_link_click_ctr": "0.8333",
+     "cpm": "50000.00",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "15"
+      }
+     ]
+    },
+    {
+     "adset_id": "as4",
+     "adset_name": "[GIỮ] Remarketing web 30 ngày",
+     "campaign_id": "c3",
+     "campaign_name": "Retarget",
+     "spend": "800000",
+     "impressions": "15000",
+     "reach": "6250",
+     "frequency": "2.4",
+     "clicks": "420",
+     "inline_link_clicks": "300",
+     "inline_link_click_ctr": "2.0000",
+     "cpm": "53333.33",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "10"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "6"
+      }
+     ]
+    },
+    {
+     "adset_id": "as5",
+     "adset_name": "Broad toàn quốc",
+     "campaign_id": "c2",
+     "campaign_name": "Dự án Sun Garden - CBO",
+     "spend": "5000000",
+     "impressions": "150000",
+     "reach": "93750",
+     "frequency": "1.6",
+     "clicks": "2940",
+     "inline_link_clicks": "2100",
+     "inline_link_click_ctr": "1.4000",
+     "cpm": "33333.33",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "40"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "15"
+      }
+     ]
+    },
+    {
+     "adset_id": "as6",
+     "adset_name": "Retarget xem video 50%",
+     "campaign_id": "c3",
+     "campaign_name": "Retarget",
+     "spend": "1200000",
+     "impressions": "9000",
+     "reach": "2812",
+     "frequency": "3.2",
+     "clicks": "98",
+     "inline_link_clicks": "70",
+     "inline_link_click_ctr": "0.7778",
+     "cpm": "133333.33",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "4"
+      }
+     ]
+    }
+   ],
+   "last_7d": [
+    {
+     "adset_id": "as1",
+     "adset_name": "Tệp 25-45 Hà Nội",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "2800000",
+     "impressions": "70000",
+     "reach": "31818",
+     "frequency": "2.2",
+     "clicks": "840",
+     "inline_link_clicks": "600",
+     "inline_link_click_ctr": "0.8571",
+     "cpm": "40000.00",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "9"
+      }
+     ]
+    },
+    {
+     "adset_id": "as2",
+     "adset_name": "Lookalike 1% khách cũ",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "4600000",
+     "impressions": "120000",
+     "reach": "57142",
+     "frequency": "2.1",
+     "clicks": "2800",
+     "inline_link_clicks": "2000",
+     "inline_link_click_ctr": "1.6667",
+     "cpm": "38333.33",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "30"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "12"
+      }
+     ]
+    },
+    {
+     "adset_id": "as3",
+     "adset_name": "Sở thích đầu tư BĐS",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "7000000",
+     "impressions": "140000",
+     "reach": "53846",
+     "frequency": "2.6",
+     "clicks": "1680",
+     "inline_link_clicks": "1200",
+     "inline_link_click_ctr": "0.8571",
+     "cpm": "50000.00",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "32"
+      }
+     ]
+    },
+    {
+     "adset_id": "as4",
+     "adset_name": "[GIỮ] Remarketing web 30 ngày",
+     "campaign_id": "c3",
+     "campaign_name": "Retarget",
+     "spend": "2000000",
+     "impressions": "35000",
+     "reach": "12068",
+     "frequency": "2.9",
+     "clicks": "979",
+     "inline_link_clicks": "700",
+     "inline_link_click_ctr": "2.0000",
+     "cpm": "57142.86",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "22"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "10"
+      }
+     ]
+    },
+    {
+     "adset_id": "as5",
+     "adset_name": "Broad toàn quốc",
+     "campaign_id": "c2",
+     "campaign_name": "Dự án Sun Garden - CBO",
+     "spend": "12000000",
+     "impressions": "340000",
+     "reach": "170000",
+     "frequency": "2.0",
+     "clicks": "7000",
+     "inline_link_clicks": "5000",
+     "inline_link_click_ctr": "1.4706",
+     "cpm": "35294.12",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "90"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "40"
+      }
+     ]
+    },
+    {
+     "adset_id": "as6",
+     "adset_name": "Retarget xem video 50%",
+     "campaign_id": "c3",
+     "campaign_name": "Retarget",
+     "spend": "2800000",
+     "impressions": "18000",
+     "reach": "4390",
+     "frequency": "4.1",
+     "clicks": "210",
+     "inline_link_clicks": "150",
+     "inline_link_click_ctr": "0.8333",
+     "cpm": "155555.56",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "8"
+      }
+     ]
+    }
+   ]
+  },
+  "ad": {
+   "today": [
+    {
+     "ad_id": "ad1",
+     "ad_name": "Video flycam dự án",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "400000",
+     "impressions": "11000",
+     "reach": "9166",
+     "frequency": "1.2",
+     "clicks": "251",
+     "inline_link_clicks": "180",
+     "inline_link_click_ctr": "1.6364",
+     "cpm": "36363.64",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "3"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "2"
+      }
+     ],
+     "adset_id": "as2"
+    },
+    {
+     "ad_id": "ad2",
+     "ad_name": "Ảnh phối cảnh tĩnh",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "300000",
+     "impressions": "5000",
+     "reach": "3846",
+     "frequency": "1.3",
+     "clicks": "28",
+     "inline_link_clicks": "20",
+     "inline_link_click_ctr": "0.4000",
+     "cpm": "60000.00",
+     "actions": [],
+     "adset_id": "as3"
+    },
+    {
+     "ad_id": "ad3",
+     "ad_name": "Carousel mặt bằng",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "350000",
+     "impressions": "9000",
+     "reach": "6923",
+     "frequency": "1.3",
+     "clicks": "98",
+     "inline_link_clicks": "70",
+     "inline_link_click_ctr": "0.7778",
+     "cpm": "38888.89",
+     "actions": [],
+     "adset_id": "as1"
+    }
+   ],
+   "last_7d": [
+    {
+     "ad_id": "ad1",
+     "ad_name": "Video flycam dự án",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "400000",
+     "impressions": "11000",
+     "reach": "9166",
+     "frequency": "1.2",
+     "clicks": "251",
+     "inline_link_clicks": "180",
+     "inline_link_click_ctr": "1.6364",
+     "cpm": "36363.64",
+     "actions": [
+      {
+       "action_type": "lead",
+       "value": "3"
+      },
+      {
+       "action_type": "onsite_conversion.messaging_conversation_started_7d",
+       "value": "2"
+      }
+     ],
+     "adset_id": "as2"
+    },
+    {
+     "ad_id": "ad2",
+     "ad_name": "Ảnh phối cảnh tĩnh",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "300000",
+     "impressions": "5000",
+     "reach": "3846",
+     "frequency": "1.3",
+     "clicks": "28",
+     "inline_link_clicks": "20",
+     "inline_link_click_ctr": "0.4000",
+     "cpm": "60000.00",
+     "actions": [],
+     "adset_id": "as3"
+    },
+    {
+     "ad_id": "ad3",
+     "ad_name": "Carousel mặt bằng",
+     "campaign_id": "c1",
+     "campaign_name": "Dự án Sun Garden - Lead",
+     "spend": "350000",
+     "impressions": "9000",
+     "reach": "6923",
+     "frequency": "1.3",
+     "clicks": "98",
+     "inline_link_clicks": "70",
+     "inline_link_click_ctr": "0.7778",
+     "cpm": "38888.89",
+     "actions": [],
+     "adset_id": "as1"
+    }
+   ]
+  }
+ }
+}
