@@ -122,28 +122,72 @@ export const EP: ProjectConfig = {
   dur: [6.87, 5.87, 7.76, 7.74, 6.7, 7.72, 4.44],
 };
 
+// Hanoi Seasons Garden: toạ độ ảnh tổng mặt bằng (sg_plan.jpg 1175×927) → ảnh vệ tinh z17.
+// Mặt bằng: phía trên là đường Nguyễn Trãi (chạy Tây Nam → Đông Bắc trên vệ tinh), dự án nằm phía Đông Nam đường.
+const SG_C: [number, number] = [1690, 2795], SG_PC: [number, number] = [591, 422];
+const SG_S = 0.414, SG_U: [number, number] = [0.892, -0.452], SG_V: [number, number] = [0.452, 0.892];
+const sgMap = (pts: [number, number][]): [number, number][] =>
+  pts.map(([x, y]) => [SG_C[0] + (x - SG_PC[0]) * SG_S * SG_U[0] + (y - SG_PC[1]) * SG_S * SG_V[0],
+    SG_C[1] + (x - SG_PC[0]) * SG_S * SG_U[1] + (y - SG_PC[1]) * SG_S * SG_V[1]]);
+// 10 toà theo tổng mặt bằng (Masteri Iconic 2 toà · Lumière The Bloom L1, L2 · cụm phía Nam 6 toà)
+const SG_PLAN: Record<string, [number, number][]> = {
+  MI1: [[247, 142], [292, 142], [292, 292], [247, 292]],
+  MI2: [[382, 142], [522, 142], [522, 295], [482, 295], [482, 182], [382, 182]],
+  L1: [[630, 140], [800, 140], [800, 182], [680, 182], [680, 297], [630, 297]],
+  L2: [[877, 140], [935, 140], [935, 297], [732, 297], [732, 257], [877, 257]],
+  S1: [[247, 442], [415, 442], [415, 485], [285, 485], [285, 552], [247, 552]],
+  S2: [[457, 535], [507, 535], [507, 705], [457, 705]],
+  S3: [[247, 590], [290, 590], [290, 662], [415, 662], [415, 705], [247, 705]],
+  S4: [[685, 460], [920, 460], [920, 705], [872, 705], [872, 505], [685, 505]],
+  S5: [[655, 565], [700, 565], [700, 705], [655, 705]],
+  S6: [[760, 655], [850, 655], [850, 705], [760, 705]],
+};
+const SG_H: Record<string, number> = { MI1: 112, MI2: 120, L1: 135, L2: 135, S1: 100, S2: 118, S3: 104, S4: 128, S5: 112, S6: 98 };
+const SG_OUTLINE: [number, number][] = [[232, 125], [952, 125], [952, 720], [232, 720]];
+const sgPath = (pts: [number, number][]) => "M" + pts.map((q) => q.join(",")).join(" L") + " Z";
+const sgBox = (pts: [number, number][], pad = 6) => {
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+  return zoneRect(Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + 2 * pad, Math.max(...ys) - Math.min(...ys) + 2 * pad, 6);
+};
+
 export const SG: ProjectConfig = {
   key: "sg", name: "HANOI SEASONS GARDEN", line: "LUMIÈRE · THE BLOOM · NGUYỄN TRÃI",
   hook: ["TRÊN TRỤC", "NGUYỄN TRÃI"],
   p13: [1223, 2347], hg13: [1467, 2140], km: "5,7",
-  p17: [1649, 2735], site: [1700, 2790],
-  parcel: "M1579,2710 L1704,2635 L1809,2765 L1809,2905 L1719,2935 L1649,2855 L1594,2775 Z",
-  towers: [[-75, -55], [-35, -80], [5, -55], [45, -30], [80, 0], [-45, -10], [-5, 15], [35, 40], [75, 70], [10, 90]].map(([dx, dy], i) => ({
-    dx, dy, w: 20, d: 20, h: 110 + (i % 3) * 15 })),
+  p17: [1649, 2735], site: SG_C,
+  parcel: sgPath(sgMap(SG_OUTLINE)),
+  towers: [],
+  footprints: Object.entries(SG_PLAN).map(([k, pts]) => ({ pts: sgMap(pts), h: SG_H[k] })),
   district: "Cửa ngõ Tây Nam · Thanh Xuân",
   travel: [
     { small: "Kết nối tuyến metro", big: "GA THƯỢNG ĐÌNH" },
     { small: "Vành đai 2,5 · Vành đai 3 → Nội Bài / Ocean City", big: "≈ 30 PHÚT" },
     { small: "Đại học Quốc gia · Bạch Mai · Quân y 103", big: "TIỆN ÍCH NGOẠI KHU" },
   ],
+  s3Card: { src: "m4/sg_loc.jpg", label: "Vị trí trên trục Nguyễn Trãi · Ảnh: Masterise Homes" },
   ground: [{ t: "5 KHU VƯỜN", color: "#FFFFFF", size: 84 }, { t: "CHỦ ĐỀ", color: "#FFB02E", size: 96 }],
   landscape: { small: "Bể bơi bốn mùa", big: "MÁI VÒM CÁNH HOA" },
+  s4Card: { src: "m4/sg_hd_17.jpg", label: "Mái vòm cánh hoa · Ảnh: Masterise Homes" },
   stat: { value: "10", label: "TÒA THÁP · CAO 35–46 TẦNG" },
+  planTour: {
+    src: "m4/sg_plan.jpg", w: 1175, h: 927,
+    steps: [
+      { at: 0, cam: { x: 592, y: 430, zoom: 0.95 }, zones: Object.values(SG_PLAN).map((p) => sgBox(p)) },
+      { at: 3.0, cam: { x: 600, y: 410, zoom: 0.95 }, zones: [zoneRect(232, 125, 720, 595, 26)],
+        label: { x: 300, y: 440, small: "Quỹ đất", big: "HƠN 8 HA", dx: 60, dy: -230 } },
+      { at: 5.2, cam: { x: 780, y: 230, zoom: 2.0 }, zones: [sgBox(SG_PLAN.L1), sgBox(SG_PLAN.L2)],
+        label: { x: 780, y: 220, small: "Phân khu đầu tiên", big: "THE BLOOM · L1 · L2", dx: -120, dy: 190 } },
+      { at: 7.6, cam: { x: 620, y: 380, zoom: 2.1 }, zones: [zoneRect(565, 325, 115, 105, 52)],
+        label: { x: 622, y: 378, small: "Bể bơi bốn mùa", big: "MÁI VÒM CÁNH HOA", dx: 110, dy: -170 } },
+      { at: 9.4, cam: { x: 600, y: 580, zoom: 1.6 }, zones: [zoneRect(290, 560, 145, 75, 30), zoneRect(735, 525, 155, 60, 28)],
+        label: { x: 815, y: 555, small: "Hồ bơi ngoài trời", big: "5 KHU VƯỜN CHỦ ĐỀ", dx: -60, dy: 190 } },
+    ],
+  },
   photos: [
-    { src: "m4/sg_img2.jpg", kicker: "", label: "" },
-    { src: "m4/sg_img1.jpg", kicker: "Ra mắt ngày 12/5", label: "PHÂN KHU THE BLOOM" },
-    { src: "m4/sg_img3.jpg", kicker: "Masterise Hospitality vận hành", label: "CLUBHOUSE · ROOFTOP BAR" },
-    { src: "m4/sg_img4.jpg", kicker: "Studio → 4 phòng ngủ", label: "DUPLEX · PENTHOUSE" },
+    { src: "m4/sg_hd_15.jpg", kicker: "", label: "" },
+    { src: "m4/sg_hd_12.jpg", kicker: "Ra mắt ngày 12/5", label: "PHÂN KHU THE BLOOM" },
+    { src: "m4/sg_hd_03.jpg", kicker: "Masterise Hospitality vận hành", label: "CLUBHOUSE" },
+    { src: "m4/sg_hd_01.jpg", kicker: "Business lounge", label: "ROOFTOP BAR" },
   ],
   newsRatio: 960 / 432,
   dur: [6.82, 5.05, 8.16, 5.12, 11.03, 9.73, 5.02],

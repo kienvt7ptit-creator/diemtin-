@@ -25,6 +25,7 @@ export type ProjectConfig = {
   footprints?: { pts: [number, number][]; h: number }[]; // khối nhà theo đúng hình chiếu (toạ độ z17) – thay cho towers
   lake?: { d: string; label: [number, number]; small: string; big: string }; // khoanh mặt nước/cảnh quan ở cảnh 4 (z17)
   s4Card?: { src: string; label: string }; // ảnh thẻ ở cảnh 4
+  s3Card?: { src: string; label: string }; // ảnh thẻ ở cảnh 3 (kết nối), đặt phía trên danh sách thời gian
   planTour?: PlanTour; // cảnh 5 dạng tour trên mặt bằng tổng thể: zoom + khoanh từng khu
 };
 
@@ -212,7 +213,9 @@ export const ProjectFly: React.FC<{ c: ProjectConfig }> = ({ c }) => {
     const k: CamKey[] = [{ f: 0, x: c.p13[0], y: c.p13[1] + 260, zoom: 0.95 }, { f: L, x: c.p13[0], y: c.p13[1] + 260, zoom: 1.25, rotate: 6 }];
     return (
       <MapCamera src={Z13S} mapW={Z13.w} mapH={Z13.h} keys={k}
-        overlay={<><Dim to={0.25} /><Sequence from={f(0.5)} layout="none"><TravelChips items={c.travel} every={Math.max(20, Math.floor((L - f(1)) / (c.travel.length + 0.5)))} top={980} /></Sequence></>}>
+        overlay={<><Dim to={0.25} />
+          {c.s3Card && <FlyCard src={c.s3Card.src} top={300} start={f(0.3)} w={900} label={c.s3Card.label} />}
+          <Sequence from={f(0.5)} layout="none"><TravelChips items={c.travel} every={Math.max(20, Math.floor((L - f(1)) / (c.travel.length + 0.5)))} top={980} /></Sequence></>}>
         <Ring x={c.p13[0]} y={c.p13[1]} r={80} start={f(0.2)} />
         <MapPin x={c.p13[0]} y={c.p13[1]} stem={60}><Badge title={c.name} /></MapPin>
       </MapCamera>
