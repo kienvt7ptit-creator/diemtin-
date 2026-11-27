@@ -29,7 +29,7 @@ export const GC: ProjectConfig = {
     { src: "m4/gc_img3.jpg", kicker: "Hệ sinh thái Ocean City", label: "MEGA MALL · VINSCHOOL · VINMEC" },
   ],
   newsRatio: 960 / 498,
-  dur: [6.5, 9.5, 11.5, 8.5, 10, 10.5, 6.5],
+  dur: [7.22, 7.3, 11.44, 7.34, 8.84, 10.74, 4.42],
 };
 
 export const OP: ProjectConfig = {
@@ -54,7 +54,7 @@ export const OP: ProjectConfig = {
     { src: "m4/op_img1.jpg", kicker: "10 loại hình căn hộ", label: "STUDIO → DUPLEX · PENTHOUSE" },
   ],
   newsRatio: 960 / 500,
-  dur: [6.5, 8.5, 9.5, 9, 10, 12, 6.5],
+  dur: [7.11, 5.26, 9.15, 6.97, 6.75, 10.22, 4.48],
 };
 
 export const EP: ProjectConfig = {
@@ -79,7 +79,7 @@ export const EP: ProjectConfig = {
     { src: "m4/ep_img2.jpg", kicker: "Lấy cảm hứng hoa sen", label: "DỰ ÁN THỨ 8 DÒNG LUMIÈRE" },
   ],
   newsRatio: 960 / 431,
-  dur: [7, 8.5, 9.5, 10, 9, 9.5, 6.5],
+  dur: [6.87, 5.87, 7.76, 7.74, 6.7, 7.72, 4.44],
 };
 
 export const SG: ProjectConfig = {
@@ -106,5 +106,5 @@ export const SG: ProjectConfig = {
     { src: "m4/sg_img4.jpg", kicker: "Studio → 4 phòng ngủ", label: "DUPLEX · PENTHOUSE" },
   ],
   newsRatio: 960 / 432,
-  dur: [6.5, 9.5, 11, 8.5, 11, 10, 7],
+  dur: [6.82, 5.05, 8.16, 5.12, 11.03, 9.73, 5.02],
 };

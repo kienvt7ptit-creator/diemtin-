@@ -30,12 +30,14 @@ const Z13 = { w: 2560, h: 4096 };
 const Z17 = { w: 3072, h: 5120 };
 const cl = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
+// Thời lượng tối thiểu mỗi cảnh (giây) để kịp đọc thẻ bài báo / ảnh; phần dư có nhạc nền.
+const MIN_SCENE = [6.5, 8.5, 8, 7.5, 8, 9, 5];
 export const timeline = (dur: number[]) => {
   const LEAD = 0.2, GAP = 0.15, OUTRO = 2.5;
   const starts: number[] = [];
   let t = LEAD;
-  for (const d of dur) { starts.push(t); t += d + GAP; }
-  const total = starts[starts.length - 1] + dur[dur.length - 1] + OUTRO;
+  dur.forEach((d, i) => { starts.push(t); t += Math.max(d, MIN_SCENE[i] ?? 0) + GAP; });
+  const total = starts[starts.length - 1] + Math.max(dur[dur.length - 1], MIN_SCENE[dur.length - 1] ?? 0) + OUTRO;
   return { starts, total, OUTRO };
 };
 export const projectFrames = (c: ProjectConfig) => f(timeline(c.dur).total);
