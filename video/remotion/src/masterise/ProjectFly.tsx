@@ -2,7 +2,7 @@
 // Mỗi dự án chỉ khai báo một ProjectConfig: toạ độ trên ảnh vệ tinh, ranh lô đất, số liệu, ảnh, bài báo, thời lượng voice.
 import React from "react";
 import { AbsoluteFill, Audio, Easing, Img, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { MapCamera, MapPin, Callout, Arc, CamKey, Tower3D, ParcelGlow, Billboard, Ring, GroundText, NewsCard, DipBlack } from "../kien/MapFx";
+import { MapCamera, MapPin, Callout, Arc, CamKey, Tower3D, ParcelGlow, Billboard, Ring, GroundText, NewsCard, DipBlack, Prism3D, TraceZone } from "../kien/MapFx";
 import { KeywordStack, NumberRoll, TypeOn, BlurIn, COLORS } from "../kien/TextFx";
 
 export type ProjectConfig = {
@@ -21,6 +21,17 @@ export type ProjectConfig = {
   photos: { src: string; kicker: string; label: string }[]; // ảnh dự án (cảnh quan, tiện ích)
   newsRatio: number; // tỉ lệ ảnh {key}_news.jpg
   dur: number[]; // thời lượng 7 đoạn voice (giây, sau khi tăng tốc)
+  // --- tuỳ chọn ---
+  footprints?: { pts: [number, number][]; h: number }[]; // khối nhà theo đúng hình chiếu (toạ độ z17) – thay cho towers
+  lake?: { d: string; label: [number, number]; small: string; big: string }; // khoanh mặt nước/cảnh quan ở cảnh 4 (z17)
+  s4Card?: { src: string; label: string }; // ảnh thẻ ở cảnh 4
+  planTour?: PlanTour; // cảnh 5 dạng tour trên mặt bằng tổng thể: zoom + khoanh từng khu
+};
+
+export type PlanTour = {
+  src: string; w: number; h: number;
+  steps: { at: number; cam: { x: number; y: number; zoom: number }; zones: string[];
+    label?: { x: number; y: number; small: string; big: string; dx: number; dy: number } }[];
 };
 
 const FPS = 30;
@@ -152,9 +163,11 @@ export const ProjectFly: React.FC<{ c: ProjectConfig }> = ({ c }) => {
     glowAt = 0, towersAt = 0, logoAt, logoLift = 170, logoScale = 0.5 }) => (
     <>
       <ParcelGlow id={c.key} d={c.parcel} mapW={Z17.w} mapH={Z17.h} start={glowAt} dur={glowAt === 0 ? 1 : 22} />
-      {c.towers.map((t, i) => (
-        <Tower3D key={i} x={S[0] + t.dx} y={S[1] + t.dy} w={t.w} d={t.d} h={t.h} start={towersAt + i * 3} dur={towersAt === 0 ? 1 : 22} />
-      ))}
+      {c.footprints
+        ? c.footprints.map((t, i) => <Prism3D key={i} pts={t.pts} h={t.h} start={towersAt + i * 3} dur={towersAt === 0 ? 1 : 22} />)
+        : c.towers.map((t, i) => (
+          <Tower3D key={i} x={S[0] + t.dx} y={S[1] + t.dy} w={t.w} d={t.d} h={t.h} start={towersAt + i * 3} dur={towersAt === 0 ? 1 : 22} />
+        ))}
       {logoAt !== undefined && (
         <Billboard x={S[0]} y={S[1] - 10} lift={logoLift} start={logoAt}><NameMark name={c.name} line={c.line} scale={logoScale} /></Billboard>
       )}
@@ -211,9 +224,12 @@ export const ProjectFly: React.FC<{ c: ProjectConfig }> = ({ c }) => {
     const k: CamKey[] = [{ f: 0, x: S[0], y: S[1] + 40, zoom: 0.7, tilt: 30, rotate: 6 }, { f: f(1.4), x: S[0], y: S[1] + 40, zoom: 1.2, tilt: 48, rotate: -10 }, { f: L, x: S[0], y: S[1] + 60, zoom: 1.35, tilt: 52, rotate: 12 }];
     return (
       <MapCamera background={SKY} src={Z17S} mapW={Z17.w} mapH={Z17.h} keys={k}
-        overlay={<FlyCard src={c.photos[0].src} top={1010} start={f(Math.min(4.6, c.dur[3] - 3))} label="Phối cảnh dự án · Ảnh: Masterise Homes" />}>
+        overlay={<FlyCard src={c.s4Card?.src ?? c.photos[0].src} top={1010} start={f(Math.min(4.6, c.dur[3] - 3))} label={c.s4Card?.label ?? "Phối cảnh dự án · Ảnh: Masterise Homes"} />}>
+        {c.lake && <TraceZone id={`lake-${c.key}`} d={c.lake.d} mapW={Z17.w} mapH={Z17.h} start={f(0.9)} color="#5EE7FF" fill="rgba(94,231,255,.14)" />}
         <Site />
-        <Callout x={S[0] - 160} y={S[1] + 40} start={f(1.6)} small={c.landscape.small} big={c.landscape.big} dx={-40} dy={-200} color="#7FE7C4" />
+        {c.lake
+          ? <Callout x={c.lake.label[0]} y={c.lake.label[1]} start={f(1.6)} small={c.lake.small} big={c.lake.big} dx={60} dy={-190} color="#7FE7C4" />
+          : <Callout x={S[0] - 160} y={S[1] + 40} start={f(1.6)} small={c.landscape.small} big={c.landscape.big} dx={-40} dy={-200} color="#7FE7C4" />}
         <Sequence durationInFrames={f(Math.min(4.4, c.dur[3] - 3.2))} layout="none">
           <GroundText x={S[0] - 60} y={S[1] + 170} start={6} lines={c.ground} />
         </Sequence>
@@ -223,6 +239,36 @@ export const ProjectFly: React.FC<{ c: ProjectConfig }> = ({ c }) => {
   // 5. Quy mô + bài báo
   const S5: React.FC = () => {
     const L = len(4);
+    if (c.planTour) {
+      const T = c.planTour;
+      const keys: CamKey[] = T.steps.flatMap((st, i) => {
+        const a = f(st.at), b = i < T.steps.length - 1 ? f(T.steps[i + 1].at) : L;
+        return [{ f: a, ...st.cam }, { f: Math.max(a + 12, b - 1), x: st.cam.x, y: st.cam.y, zoom: st.cam.zoom * 1.04 }];
+      });
+      keys[0] = { ...keys[0], f: 0 };
+      return (
+        <MapCamera src={T.src} mapW={T.w} mapH={T.h} keys={keys}
+          overlay={<>
+            <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(0,0,0,.65) 0%, rgba(0,0,0,0) 26%)" }} />
+            <Sequence from={f(0.2)} layout="none">
+              <div style={{ position: "absolute", top: 240, left: 0, right: 0, textAlign: "center" }}>
+                <NumberRoll value={c.stat.value} color={COLORS.yellow} size={150} />
+                <div><TypeOn text={c.stat.label} start={5} dur={600} style={{ fontSize: 40, fontWeight: 800, letterSpacing: "0.06em" }} /></div>
+              </div>
+            </Sequence>
+          </>}>
+          {T.steps.map((st, i) => {
+            const a = f(st.at), b = i < T.steps.length - 1 ? f(T.steps[i + 1].at) + 6 : L;
+            return (
+              <Sequence key={i} from={a} durationInFrames={b - a} layout="none">
+                {st.zones.map((z, j) => <TraceZone key={j} id={`z${i}-${j}`} d={z} mapW={T.w} mapH={T.h} start={j * 2} />)}
+                {st.label && <Callout x={st.label.x} y={st.label.y} start={6} small={st.label.small} big={st.label.big} dx={st.label.dx} dy={st.label.dy} color="#FFD166" />}
+              </Sequence>
+            );
+          })}
+        </MapCamera>
+      );
+    }
     const k: CamKey[] = [{ f: 0, x: S[0], y: S[1] + 120, zoom: 1.6, tilt: 55, rotate: 30 }, { f: L, x: S[0], y: S[1] + 120, zoom: 2.0, tilt: 58, rotate: -25 }];
     return (
       <MapCamera background={SKY} src={Z17S} mapW={Z17.w} mapH={Z17.h} keys={k}

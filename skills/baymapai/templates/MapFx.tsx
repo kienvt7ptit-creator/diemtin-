@@ -460,3 +460,63 @@ export const DipBlack: React.FC<{ len?: number }> = ({ len = 6 }) => {
   const o = interpolate(f, [0, len / 2, len], [0, 1, 0], clamp);
   return <AbsoluteFill style={{ background: "#000", opacity: o }} />;
 };
+
+/** MF18: khối nhà 3D theo đúng hình chiếu bằng (đa giác bất kỳ – chữ L, Z, Y…). pts theo toạ độ bản đồ, h = chiều cao px bản đồ. */
+export const Prism3D: React.FC<{
+  pts: [number, number][]; h: number; start?: number; dur?: number;
+  facade?: string; line?: string; roof?: string; glow?: string;
+}> = ({ pts, h, start = 0, dur = 24, facade = "#6e625a", line = "rgba(245,238,228,.7)", roof = "#4a423c", glow = "#E9C46A" }) => {
+  const f = useCurrentFrame() - start;
+  const p = f < 0 ? 0 : interpolate(f, [0, dur], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  if (p <= 0) return null;
+  const H = Math.max(0.01, h * p);
+  const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
+  const minx = Math.min(...xs), miny = Math.min(...ys), w = Math.max(...xs) - minx, hh = Math.max(...ys) - miny;
+  return (
+    <div style={{ position: "absolute", left: minx, top: miny, width: w, height: hh, transformStyle: "preserve-3d" }}>
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.35)", filter: "blur(3px)",
+        clipPath: `polygon(${pts.map(([x, y]) => `${x - minx}px ${y - miny}px`).join(",")})` }} />
+      {pts.map((a, i) => {
+        const b = pts[(i + 1) % pts.length];
+        const dx = b[0] - a[0], dy = b[1] - a[1];
+        const len = Math.hypot(dx, dy), ang = (Math.atan2(dy, dx) * 180) / Math.PI;
+        const shade = 0.62 + 0.38 * Math.abs(Math.cos(((ang - 35) * Math.PI) / 180));
+        return (
+          <div key={i} style={{ position: "absolute", left: a[0] - minx, top: a[1] - miny, width: len + 0.4, height: H, transformOrigin: "0 0",
+            transform: `rotate(${ang}deg) rotateX(90deg)`, filter: `brightness(${shade})`, backfaceVisibility: "visible",
+            background: `repeating-linear-gradient(0deg, ${line} 0 0.9px, transparent 0.9px 3.1px),
+              repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 0.8px, transparent 0.8px 6px), ${facade}` }} />
+        );
+      })}
+      <div style={{ position: "absolute", inset: 0, background: roof, transform: `translateZ(${H}px)`,
+        clipPath: `polygon(${pts.map(([x, y]) => `${x - minx}px ${y - miny}px`).join(",")})`, boxShadow: `0 0 4px ${glow}` }} />
+    </div>
+  );
+};
+
+/** MF19 (kiểu After Effects): khoanh khu vực – viền tự vẽ, sau đó một vệt sáng chạy vòng quanh liên tục, nền khu vực sáng nhẹ.
+ *  d = path SVG theo toạ độ bản đồ (dùng zoneRect() cho hình chữ nhật bo góc). */
+export const TraceZone: React.FC<{ d: string; mapW: number; mapH: number; id: string; start?: number; color?: string; fill?: string;
+  width?: number; period?: number }> = ({ d, mapW, mapH, id, start = 0, color = "#FFD166", fill = "rgba(255,209,102,.16)", width = 4, period = 45 }) => {
+  const f = useCurrentFrame() - start;
+  const cam = useCam();
+  if (f < 0) return null;
+  const draw = interpolate(f, [0, 16], [0, 1], { ...clamp, easing: easeIO });
+  const fo = interpolate(f, [10, 22], [0, 1], clamp);
+  const run = ((f / period) % 1);
+  const sw = width / cam.zoom;
+  return (
+    <svg width={mapW} height={mapH} viewBox={`0 0 ${mapW} ${mapH}`} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
+      <path id={id} d={d} fill={fill} fillOpacity={fo} stroke="none" />
+      <path d={d} fill="none" stroke="#ffffff" strokeOpacity={0.85} strokeWidth={sw * 0.7} strokeLinejoin="round" pathLength={1}
+        strokeDasharray={1} strokeDashoffset={1 - draw} />
+      <path d={d} fill="none" stroke={color} strokeWidth={sw * 1.6} strokeLinecap="round" strokeLinejoin="round" pathLength={1}
+        strokeDasharray="0.16 0.84" strokeDashoffset={-run} opacity={fo}
+        style={{ filter: `drop-shadow(0 0 ${6 / cam.zoom}px ${color}) drop-shadow(0 0 ${14 / cam.zoom}px ${color})` }} />
+    </svg>
+  );
+};
+
+/** Path hình chữ nhật bo góc cho TraceZone. */
+export const zoneRect = (x: number, y: number, w: number, h: number, r = 10) =>
+  `M${x + r},${y} H${x + w - r} Q${x + w},${y} ${x + w},${y + r} V${y + h - r} Q${x + w},${y + h} ${x + w - r},${y + h} H${x + r} Q${x},${y + h} ${x},${y + h - r} V${y + r} Q${x},${y} ${x + r},${y} Z`;

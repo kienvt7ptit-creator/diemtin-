@@ -5,6 +5,27 @@
 // sg: "Masterise Homes ra mắt dự án Hanoi Seasons Garden" (15/5/2026)
 // Toạ độ: Google Maps. Ranh lô đất & khối tháp: ước lượng trên ảnh vệ tinh, minh hoạ.
 import { ProjectConfig } from "./ProjectFly";
+import { zoneRect } from "../kien/MapFx";
+
+// Masteri Grand Coast: chuyển toạ độ ảnh mặt bằng (gc_plan.jpg 1500×1125) sang ảnh vệ tinh z17.
+// Trục dài mặt bằng chạy theo trục lô đất (Bắc → Nam), phía hồ Wonder Wave (đáy mặt bằng) quay về phía Tây.
+const GC_O: [number, number] = [1603.5, 2681.75];
+const GC_S = 0.281, GC_U: [number, number] = [0.32, 0.948], GC_V: [number, number] = [-0.948, 0.32];
+const gcMap = (pts: [number, number][]): [number, number][] =>
+  pts.map(([x, y]) => [GC_O[0] + (x - 750) * GC_S * GC_U[0] + (y - 255) * GC_S * GC_V[0], GC_O[1] + (x - 750) * GC_S * GC_U[1] + (y - 255) * GC_S * GC_V[1]]);
+const GC_PLAN = {
+  L1: [[100, 128], [262, 128], [262, 182], [120, 182], [118, 238], [62, 238], [62, 150]],
+  Z1: [[312, 203], [358, 203], [358, 272], [384, 272], [384, 378], [336, 378], [336, 300], [312, 300]],
+  L2: [[440, 128], [600, 128], [628, 150], [628, 238], [572, 238], [570, 182], [440, 182]],
+  Z2: [[737, 203], [783, 203], [783, 272], [809, 272], [809, 378], [761, 378], [761, 300], [737, 300]],
+  L3: [[980, 128], [1142, 128], [1142, 182], [1000, 182], [998, 238], [942, 238], [942, 150]],
+  Z3: [[1153, 203], [1200, 203], [1200, 300], [1176, 300], [1176, 378], [1130, 378], [1130, 272], [1153, 272]],
+  L4: [[1240, 128], [1400, 128], [1428, 150], [1428, 238], [1372, 238], [1370, 182], [1240, 182]],
+} as Record<string, [number, number][]>;
+const bbox = (pts: [number, number][], pad = 8) => {
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+  return zoneRect(Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + 2 * pad, Math.max(...ys) - Math.min(...ys) + 2 * pad, 8);
+};
 
 
 export const GC: ProjectConfig = {
@@ -30,6 +51,25 @@ export const GC: ProjectConfig = {
   ],
   newsRatio: 960 / 498,
   dur: [7.22, 7.3, 11.44, 7.34, 8.84, 10.74, 4.42],
+  footprints: Object.values(GC_PLAN).map((pts) => ({ pts: gcMap(pts), h: 76 })),
+  lake: { d: "M1221,2483 L1391,2468 L1421,2558 L1461,2728 L1491,2908 L1291,2908 L1181,2728 Z", label: [1330, 2620],
+    small: "Đối diện", big: "HỒ WONDER WAVE PARK" },
+  s4Card: { src: "m4/gc_front.jpg", label: "Phân khu The Wave (L1 · Z1 · L2) · Ảnh: Masterise Homes" },
+  planTour: {
+    src: "m4/gc_plan.jpg", w: 1500, h: 1125,
+    steps: [
+      { at: 0, cam: { x: 750, y: 330, zoom: 0.72 }, zones: Object.values(GC_PLAN).map((p) => bbox(p)) },
+      { at: 2.6, cam: { x: 750, y: 300, zoom: 0.72 },
+        zones: [zoneRect(30, 118, 272, 268, 14), zoneRect(398, 118, 330, 268, 14), zoneRect(818, 118, 310, 268, 14), zoneRect(1205, 118, 252, 268, 14)],
+        label: { x: 560, y: 250, small: "Hệ tiện ích phân bổ trong", big: "4 CÔNG VIÊN NỘI KHU", dx: 90, dy: -250 } },
+      { at: 4.8, cam: { x: 340, y: 230, zoom: 1.9 }, zones: [zoneRect(292, 118, 66, 64, 8)],
+        label: { x: 325, y: 150, small: "Khu thể thao", big: "SÂN PICKLEBALL", dx: 110, dy: 150 } },
+      { at: 6.0, cam: { x: 450, y: 290, zoom: 1.9 }, zones: [zoneRect(398, 222, 72, 110, 10)],
+        label: { x: 434, y: 280, small: "Khu vui chơi", big: "TRẺ EM", dx: 120, dy: -150 } },
+      { at: 7.2, cam: { x: 540, y: 330, zoom: 1.9 }, zones: [zoneRect(452, 310, 172, 52, 8)],
+        label: { x: 538, y: 336, small: "Hồ bơi quy mô lớn", big: "BỂ BƠI OLYMPIC 50M", dx: -40, dy: 170 } },
+    ],
+  },
 };
 
 export const OP: ProjectConfig = {
