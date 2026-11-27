@@ -1,0 +1,93 @@
+# ===================== FB ADS BOT - CẤU HÌNH =====================
+# Copy file này thành config.yaml rồi sửa số cho hợp ngành/giá sản phẩm của bạn.
+# Tiền tính theo đơn vị tiền tệ của tài khoản quảng cáo (ví dụ VND).
+
+# propose : chỉ đề xuất + báo Telegram, KHÔNG đụng vào camp (mặc định, an toàn)
+# approve : lưu đề xuất, bạn chạy `approve <id>` thì mới thực hiện
+# auto    : tự thực hiện ngay (chỉ bật khi đã chạy propose vài ngày và tin bộ luật)
+mode: propose
+
+api_version: v24.0          # phiên bản Graph API của Meta
+# ad_account_id: act_123     # hoặc đặt biến môi trường META_AD_ACCOUNT_ID
+
+# Meta lưu ngân sách theo "đơn vị nhỏ nhất": VND = 1, USD = 100 (cent)
+currency_offset: 1
+
+# Thế nào là 1 "kết quả" (cộng dồn các loại dưới đây):
+#   lead                                                   : lead form / pixel lead
+#   onsite_conversion.messaging_conversation_started_7d    : bắt đầu cuộc trò chuyện Messenger
+#   offsite_conversion.fb_pixel_purchase                   : mua hàng qua pixel
+result_action_types:
+  - lead
+  - onsite_conversion.messaging_conversation_started_7d
+
+# Mục tiêu để AI đánh giá (không ảnh hưởng luật)
+goals:
+  target_cpr: 100000
+  note: "Dự án BĐS, thu lead qua form + tin nhắn"
+
+state_file: state/state.json
+
+# ------------------ CHỐT AN TOÀN ------------------
+guardrails:
+  protect_name_contains: ["[KEEP]", "[GIỮ]"]  # adset/ad/campaign có nhãn này: bot không đụng vào
+  cooldown_hours: 24          # mỗi đối tượng chỉ bị chỉnh tối đa 1 lần / 24h
+  max_scale_percent: 20       # tăng > 20%/lần dễ làm adset quay lại giai đoạn học
+  max_reduce_percent: 50
+  min_daily_budget: 100000
+  max_daily_budget: 5000000
+  budget_round_to: 1000
+  max_actions_per_run: 15
+  account_daily_spend_cap: 10000000   # vượt mức này -> cảnh báo
+  pending_ttl_hours: 12       # đề xuất chờ duyệt quá hạn sẽ bị bỏ
+
+# ------------------ BỘ LUẬT ------------------
+# level: adset | ad          window: today | yesterday | last_3d | last_7d | last_14d | last_30d | this_month
+# action: pause | scale_budget | reduce_budget | alert   (chỉnh ngân sách chỉ cho adset, không áp dụng CBO)
+# conditions: tất cả phải đúng. Chỉ số: spend, impressions, reach, frequency, clicks, link_clicks,
+#   ctr (%), cpm, cpc, results, cpr (chi phí/kết quả), revenue, roas, daily_budget, spend_pct_budget (%)
+# Nếu 1 đối tượng khớp nhiều luật: TẮT > GIẢM > TĂNG.
+rules:
+  - name: "Đốt tiền không ra kết quả"
+    level: adset
+    window: today
+    conditions: ["spend >= 300000", "results == 0"]
+    action: pause
+
+  - name: "CPR quá cao trong ngày"
+    level: adset
+    window: today
+    conditions: ["spend >= 500000", "cpr > 250000"]
+    action: pause
+
+  - name: "Ad CTR thấp, không ra kết quả"
+    level: ad
+    window: today
+    conditions: ["impressions >= 3000", "ctr < 0.6", "results == 0"]
+    action: pause
+
+  - name: "Winner 3 ngày: tăng ngân sách"
+    level: adset
+    window: last_3d
+    conditions: ["results >= 5", "cpr <= 120000", "frequency < 2.5"]
+    action: scale_budget
+    percent: 20
+
+  - name: "CPR 3 ngày hơi cao: giảm ngân sách"
+    level: adset
+    window: last_3d
+    conditions: ["spend >= 1000000", "cpr > 180000", "cpr <= 250000"]
+    action: reduce_budget
+    percent: 30
+
+  - name: "Mỏi quảng cáo (tần suất cao)"
+    level: adset
+    window: last_7d
+    conditions: ["frequency >= 3.5"]
+    action: alert
+
+  - name: "CPM cao bất thường"
+    level: adset
+    window: today
+    conditions: ["impressions >= 2000", "cpm >= 150000"]
+    action: alert
