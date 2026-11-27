@@ -5,3 +5,5 @@ public/gcp/
 public/m4/*_z13.jpg
 public/m4/*_z17.jpg
 public/m4/*.wav
+# tài liệu dự án (ảnh chủ đầu tư, chính sách bán hàng) – không đưa lên repo
+public/m4/sg_*.jpg
