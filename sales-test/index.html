@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sales Test · Nhập môn</title>
+<meta name="description" content="Bài kiểm tra 30 câu kiến thức nền tảng cho sales bất động sản">
+<meta name="theme-color" content="#1c140f">
+<link rel="icon" type="image/png" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#f7f3ea;--card:#fffdf8;--ink:#1c140f;--muted:#6b6258;--line:#e5ddcf;
+  --brand:#b4532a;--brand-ink:#fff;--soft:#f1e8da;
+  --ok:#1f7a4d;--ok-bg:#e3f3ea;--bad:#b3261e;--bad-bg:#fbe7e5;--warn:#a86b00;
+  --radius:16px;--shadow:0 1px 2px rgba(28,20,15,.06),0 8px 24px rgba(28,20,15,.06);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15110e;--card:#1f1a16;--ink:#f3ece2;--muted:#a99d90;--line:#352d26;
+  --brand:#e07a4a;--brand-ink:#1c140f;--soft:#2a231d;
+  --ok:#5fcf95;--ok-bg:#16301f;--bad:#ff8a80;--bad-bg:#3a1a17;--warn:#f0b44c;
+  --shadow:none;
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Be Vietnam Pro",system-ui,-apple-system,sans-serif;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);-webkit-tap-highlight-color:transparent}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+[hidden]{display:none!important}
+h1{font-size:28px;line-height:1.2;margin:0 0 8px;letter-spacing:-.01em}
+h2{font-size:20px;margin:0 0 12px}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+.btn{appearance:none;border:0;border-radius:12px;padding:14px 18px;font:600 16px/1.2 inherit;cursor:pointer;
+  background:var(--brand);color:var(--brand-ink);width:100%;min-height:52px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-row{display:grid;gap:10px;margin-top:16px}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:16px inherit}
+input:focus{outline:2px solid var(--brand);outline-offset:1px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 4px}
+.stat{background:var(--soft);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:12px;color:var(--muted)}
+ul.rules{padding-left:18px;margin:12px 0 0;color:var(--muted);font-size:14px}
+ul.rules li{margin:4px 0}
+
+/* quiz */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;font-size:14px}
+.topbar b{font-size:15px}
+.score-pill{background:var(--soft);border-radius:999px;padding:4px 12px;font-weight:600}
+.progress{height:6px;background:var(--line);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.progress i{display:block;height:100%;background:var(--brand);width:0;transition:width .3s}
+.timer{height:4px;background:var(--line);border-radius:999px;overflow:hidden;margin:14px 0 4px}
+.timer i{display:block;height:100%;background:var(--ok);width:100%}
+.timer.low i{background:var(--bad)}
+.timer-txt{font-size:13px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.cat{display:inline-block;font-size:12px;font-weight:600;background:var(--soft);color:var(--muted);border-radius:999px;padding:4px 10px;margin-bottom:10px}
+.prompt{font-size:18px;font-weight:600;line-height:1.5;margin:0}
+.choices{display:grid;gap:10px;margin-top:16px}
+.choice{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:14px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:15px/1.45 inherit;cursor:pointer}
+.choice .k{flex:0 0 28px;height:28px;border-radius:8px;background:var(--soft);display:grid;place-items:center;font-weight:700;font-size:14px}
+.choice:not(:disabled):active{transform:scale(.99)}
+@media (hover:hover){.choice:not(:disabled):hover{border-color:var(--brand)}}
+.choice.ok{border-color:var(--ok);background:var(--ok-bg)}
+.choice.ok .k{background:var(--ok);color:#fff}
+.choice.bad{border-color:var(--bad);background:var(--bad-bg)}
+.choice.bad .k{background:var(--bad);color:#fff}
+.choice:disabled{cursor:default}
+.choice.dim{opacity:.55}
+.feedback{margin-top:16px;border-radius:12px;padding:14px;border-left:4px solid var(--ok);background:var(--ok-bg)}
+.feedback.bad{border-color:var(--bad);background:var(--bad-bg)}
+.feedback h3{margin:0 0 6px;font-size:16px}
+.feedback p{margin:0;font-size:15px}
+.feedback .law{margin-top:8px;font-size:13px;color:var(--muted)}
+.feedback a{color:inherit}
+.sticky-next{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));margin-top:14px}
+
+/* result */
+.big{font-size:56px;font-weight:800;line-height:1;margin:6px 0}
+.badge{display:inline-block;padding:6px 14px;border-radius:999px;font-weight:700;font-size:14px}
+.badge.pass{background:var(--ok-bg);color:var(--ok)}
+.badge.fail{background:var(--bad-bg);color:var(--bad)}
+.bars{display:grid;gap:10px;margin-top:8px}
+.bar-row{font-size:14px}
+.bar-row .lbl{display:flex;justify-content:space-between;margin-bottom:4px}
+.bar{height:8px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px}
+details.wrong{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;background:var(--card)}
+details.wrong summary{cursor:pointer;font-weight:600;font-size:15px}
+details.wrong p{font-size:14px;margin:8px 0 0}
+.section{margin-top:16px}
+.foot{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- START -->
+  <section id="start">
+    <div class="eyebrow">Sales Lab · Bài test đầu vào</div>
+    <h1>Kiến thức nền tảng cho sales BĐS</h1>
+    <p class="muted">30 câu cơ bản theo lịch đào tạo 7 phần: nhập môn, quy trình bán hàng, Vinhomes & Ocean City, tư vấn – xử lý từ chối, dẫn khách, chốt deal, hậu bán hàng, tính toán và phong thủy cơ bản.</p>
+    <div class="card">
+      <div class="stats">
+        <div class="stat"><b>30</b><span>câu hỏi</span></div>
+        <div class="stat"><b id="secs">45s</b><span>mỗi câu</span></div>
+        <div class="stat"><b>80%</b><span>để đạt</span></div>
+      </div>
+      <form id="startForm" autocomplete="on">
+        <label for="name">Họ và tên *</label>
+        <input id="name" name="name" required maxlength="60" placeholder="VD: Nguyễn Văn A">
+        <label for="team">Phòng / nhóm</label>
+        <input id="team" name="team" maxlength="60" placeholder="VD: Sàn Hà Nội 2">
+        <div class="btn-row">
+          <button class="btn" type="submit">Bắt đầu làm bài</button>
+          <button class="btn ghost" type="button" id="resumeBtn" hidden>Làm tiếp bài đang dở</button>
+        </div>
+      </form>
+      <ul class="rules">
+        <li>Chạm vào đáp án là chốt, không sửa lại được.</li>
+        <li>Hết giờ câu nào thì câu đó tính sai.</li>
+        <li>Sau mỗi câu có lời giải để học luôn.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" hidden>
+    <div class="topbar"><b id="qnum">Câu 1/30</b><span class="score-pill" id="scorePill">0 đúng</span></div>
+    <div class="progress"><i id="prog"></i></div>
+    <div class="card">
+      <span class="cat" id="qcat"></span>
+      <p class="prompt" id="qtext"></p>
+      <div class="timer" id="timer"><i id="timerBar"></i></div>
+      <div class="timer-txt" id="timerTxt"></div>
+      <div class="choices" id="choices"></div>
+      <div id="fb" hidden></div>
+    </div>
+    <div class="sticky-next"><button class="btn" id="nextBtn" hidden>Câu tiếp theo →</button></div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" hidden>
+    <div class="card" style="text-align:center">
+      <div class="eyebrow" id="rName"></div>
+      <div class="big" id="rScore"></div>
+      <div class="muted" id="rPct"></div>
+      <div style="margin-top:10px"><span class="badge" id="rBadge"></span></div>
+      <div class="muted" style="font-size:13px;margin-top:10px" id="rMeta"></div>
+    </div>
+    <div class="card section">
+      <h2>Theo từng phần</h2>
+      <div class="bars" id="rBars"></div>
+    </div>
+    <div class="section" id="rWrongWrap">
+      <h2 id="rWrongTitle"></h2>
+      <div id="rWrong"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="shareBtn">Gửi kết quả cho quản lý</button>
+      <button class="btn ghost" id="reviewBtn">Làm lại các câu sai</button>
+      <button class="btn ghost" id="restartBtn">Làm lại từ đầu</button>
+    </div>
+  </section>
+
+  <p class="foot">Tình huống, giá và lịch thanh toán là giả định phục vụ học tập, không phải báo giá dự án. <span id="ver"></span></p>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="questions.js"></script>
+<script>
+(function(){
+const Q = window.QUIZ, ALL = Q.questions, SECS = Q.seconds || 45, PASS = 0.8;
+const KEY = 'salesTest:' + Q.course + ':' + Q.version;
+const $ = id => document.getElementById(id);
+const store = {
+  get(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch(e){ return null; } },
+  set(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} },
+  clear(){ try { localStorage.removeItem(KEY); } catch(e){} }
+};
+$('secs').textContent = SECS + 's';
+$('ver').textContent = 'Bộ câu ' + Q.title + ' · bản ' + Q.version + '.';
+
+let S = null, tick = null;
+
+function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function show(id){ ['start','quiz','result'].forEach(s => $(s).hidden = s !== id); window.scrollTo(0,0); }
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 2200); }
+function group(cat){ const m = /^Phần (\d)/.exec(cat); if (m) return 'Phần ' + m[1]; if (/^Phong thủy/.test(cat)) return 'Phong thủy cơ bản'; return 'Tính toán & pháp lý ứng dụng'; }
+const GROUP_NAMES = {'Phần 1':'Phần 1 · Nhập môn','Phần 2':'Phần 2 · Quy trình bán hàng','Phần 3':'Phần 3 · Vinhomes & Ocean City','Phần 4':'Phần 4 · Hẹn, tư vấn, xử lý từ chối','Phần 5':'Phần 5 · Dẫn khách','Phần 6':'Phần 6 · Chốt deal','Phần 7':'Phần 7 · Hậu bán hàng'};
+
+// resume
+const saved = store.get();
+if (saved && saved.status === 'doing') {
+  $('resumeBtn').hidden = false;
+  $('resumeBtn').textContent = 'Làm tiếp bài của ' + saved.name + ' (câu ' + (saved.i + 1) + '/' + saved.order.length + ')';
+  $('name').value = saved.name; $('team').value = saved.team || '';
+} else if (saved) { $('name').value = saved.name || ''; $('team').value = saved.team || ''; }
+$('resumeBtn').onclick = () => { S = saved; render(); };
+
+$('startForm').onsubmit = e => {
+  e.preventDefault();
+  const name = $('name').value.trim();
+  if (!name) { $('name').focus(); return; }
+  begin(name, $('team').value.trim(), ALL.map((_, i) => i), 'full');
+};
+
+function begin(name, team, idxs, mode){
+  S = { name, team, mode, status:'doing', i:0, started:Date.now(),
+        order: idxs, shuf: {}, answers: [] };
+  idxs.forEach(i => S.shuf[i] = shuffle(ALL[i].c.map(c => c[0])));
+  store.set(S); render();
+}
+
+function render(){
+  clearInterval(tick);
+  if (S.i >= S.order.length) return finish();
+  show('quiz');
+  const qi = S.order[S.i], q = ALL[qi], n = S.order.length;
+  const done = S.answers[S.i];
+  $('qnum').textContent = 'Câu ' + (S.i + 1) + '/' + n + (S.mode === 'review' ? ' · ôn câu sai' : '');
+  $('scorePill').textContent = S.answers.filter(a => a && a.ok).length + ' đúng';
+  $('prog').style.width = (S.i / n * 100) + '%';
+  $('qcat').textContent = q.cat;
+  $('qtext').textContent = q.q;
+  const map = Object.fromEntries(q.c);
+  $('choices').innerHTML = S.shuf[qi].map((id, k) =>
+    '<button class="choice" data-id="' + id + '"><span class="k">' + 'ABCD'[k] + '</span><span>' + esc(map[id]) + '</span></button>').join('');
+  $('choices').querySelectorAll('.choice').forEach(b => b.onclick = () => answer(b.dataset.id));
+  $('fb').hidden = true; $('nextBtn').hidden = true;
+  if (done) return reveal(done);
+  // timer (persisted deadline so reload does not reset it)
+  if (!S.deadline || S.deadlineFor !== S.i) { S.deadline = Date.now() + SECS * 1000; S.deadlineFor = S.i; store.set(S); }
+  $('timer').hidden = false; $('timerTxt').hidden = false;
+  const step = () => {
+    const left = Math.max(0, S.deadline - Date.now());
+    $('timerBar').style.width = (left / (SECS * 1000) * 100) + '%';
+    $('timer').classList.toggle('low', left < 10000);
+    $('timerTxt').textContent = 'Còn ' + Math.ceil(left / 1000) + ' giây';
+    if (left <= 0) answer(null);
+  };
+  step(); tick = setInterval(step, 200);
+}
+
+function answer(id){
+  if (S.answers[S.i]) return;
+  clearInterval(tick);
+  const q = ALL[S.order[S.i]];
+  const a = { id: q.id, pick: id, ok: id === q.a, t: Date.now() };
+  S.answers[S.i] = a; store.set(S);
+  reveal(a);
+}
+
+function reveal(a){
+  const q = ALL[S.order[S.i]];
+  $('timer').hidden = true; $('timerTxt').hidden = true;
+  $('choices').querySelectorAll('.choice').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.id === q.a) b.classList.add('ok');
+    else if (b.dataset.id === a.pick) b.classList.add('bad');
+    else b.classList.add('dim');
+  });
+  const fb = $('fb');
+  fb.className = 'feedback' + (a.ok ? '' : ' bad');
+  const head = a.ok ? 'Chính xác!' : (a.pick ? 'Chưa đúng' : 'Hết giờ');
+  let html = '<h3>' + head + '</h3><p>' + esc(q.e) + '</p>';
+  if (q.law) html += '<div class="law">Căn cứ: ' + esc(q.law) + '</div>';
+  if (q.src && q.url) html += '<div class="law">Nguồn: <a href="' + esc(q.url) + '" target="_blank" rel="noopener">' + esc(q.src) + '</a></div>';
+  fb.innerHTML = html; fb.hidden = false;
+  $('scorePill').textContent = S.answers.filter(x => x && x.ok).length + ' đúng';
+  const nb = $('nextBtn');
+  nb.textContent = S.i + 1 >= S.order.length ? 'Xem kết quả →' : 'Câu tiếp theo →';
+  nb.hidden = false;
+  setTimeout(() => fb.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+}
+$('nextBtn').onclick = () => { S.i++; store.set(S); render(); };
+
+function finish(){
+  clearInterval(tick);
+  S.status = 'done'; S.finished = S.finished || Date.now(); store.set(S);
+  show('result');
+  const n = S.order.length, ok = S.answers.filter(a => a.ok).length, pct = Math.round(ok / n * 100);
+  const pass = ok / n >= PASS;
+  $('rName').textContent = S.name + (S.team ? ' · ' + S.team : '');
+  $('rScore').textContent = ok + '/' + n;
+  $('rPct').textContent = pct + '% đúng' + (S.mode === 'review' ? ' (lượt ôn câu sai)' : '');
+  const b = $('rBadge');
+  b.className = 'badge ' + (pass ? 'pass' : 'fail');
+  b.textContent = S.mode === 'review' ? (ok === n ? 'Đã nắm hết các câu sai' : 'Cần ôn thêm') : (pass ? 'ĐẠT' : 'CHƯA ĐẠT · cần ≥ 24/30');
+  const mins = Math.round((S.finished - S.started) / 60000);
+  $('rMeta').textContent = 'Hoàn thành ' + new Date(S.finished).toLocaleString('vi-VN') + ' · ' + mins + ' phút';
+
+  const g = {};
+  S.order.forEach((qi, k) => { const key = group(ALL[qi].cat); (g[key] = g[key] || [0,0]); g[key][1]++; if (S.answers[k].ok) g[key][0]++; });
+  $('rBars').innerHTML = Object.entries(g).map(([k, [o, t]]) => {
+    const p = o / t, col = p >= .8 ? 'var(--ok)' : p >= .5 ? 'var(--warn)' : 'var(--bad)';
+    return '<div class="bar-row"><div class="lbl"><span>' + esc(GROUP_NAMES[k] || k) + '</span><b>' + o + '/' + t + '</b></div><div class="bar"><i style="width:' + (p*100) + '%;background:' + col + '"></i></div></div>';
+  }).join('');
+
+  const wrong = S.order.map((qi, k) => ({ q: ALL[qi], a: S.answers[k] })).filter(x => !x.a.ok);
+  $('rWrongTitle').textContent = wrong.length ? 'Câu cần xem lại (' + wrong.length + ')' : 'Không sai câu nào 🎉';
+  $('rWrong').innerHTML = wrong.map(({q, a}) => {
+    const m = Object.fromEntries(q.c);
+    return '<details class="wrong"><summary>' + esc(q.q) + '</summary>' +
+      '<p><b>Bạn chọn:</b> ' + (a.pick ? esc(m[a.pick]) : '<i>Hết giờ</i>') + '</p>' +
+      '<p style="color:var(--ok)"><b>Đáp án đúng:</b> ' + esc(m[q.a]) + '</p>' +
+      '<p class="muted">' + esc(q.e) + '</p></details>';
+  }).join('');
+  $('reviewBtn').hidden = !wrong.length;
+  S._wrong = wrong.map(x => ALL.indexOf(x.q));
+}
+
+$('restartBtn').onclick = () => { store.clear(); S = null; $('resumeBtn').hidden = true; show('start'); };
+$('reviewBtn').onclick = () => begin(S.name, S.team, shuffle(S._wrong), 'review');
+$('shareBtn').onclick = async () => {
+  const n = S.order.length, ok = S.answers.filter(a => a.ok).length;
+  const wrongList = S.order.map((qi, k) => S.answers[k].ok ? null : (k + 1)).filter(Boolean);
+  const txt = '📋 KẾT QUẢ TEST SALES – ' + Q.title.toUpperCase() + '\n' +
+    'Họ tên: ' + S.name + (S.team ? '\nNhóm: ' + S.team : '') + '\n' +
+    'Điểm: ' + ok + '/' + n + ' (' + Math.round(ok / n * 100) + '%) – ' + (S.mode === 'review' ? 'lượt ôn câu sai' : (ok / n >= PASS ? 'ĐẠT' : 'CHƯA ĐẠT')) + '\n' +
+    (wrongList.length && S.mode !== 'review' ? 'Câu sai: ' + wrongList.join(', ') + '\n' : '') +
+    'Thời gian: ' + new Date(S.finished).toLocaleString('vi-VN');
+  if (navigator.share) { try { await navigator.share({ text: txt }); return; } catch(e){ if (e.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(txt); toast('Đã sao chép – dán vào Zalo gửi quản lý'); }
+  catch(e){ prompt('Sao chép nội dung này:', txt); }
+};
+
+// returning to a finished test shows the result
+if (saved && saved.status === 'done') { S = saved; finish(); }
+})();
+</script>
+</body>
+</html>
